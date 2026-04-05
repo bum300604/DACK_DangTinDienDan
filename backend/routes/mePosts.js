@@ -75,6 +75,7 @@ router.get("/", checkLogin, async function (req, res, next) {
         excerpt: excerptFrom(p.content, 160),
         status: p.status,
         rejectionReason: p.rejectionReason || "",
+        hiddenFromPublic: !!p.hiddenFromPublic,
         category: formatCategory(p.category),
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
@@ -119,6 +120,7 @@ router.post("/", checkLogin, writeValidation, async function (req, res, next) {
       author: req.userId,
       status: "PENDING",
       rejectionReason: "",
+      hiddenFromPublic: false,
     });
 
     const populated = await Post.findById(doc._id)
@@ -167,6 +169,7 @@ router.get("/:id", checkLogin, async function (req, res, next) {
       content: post.content,
       status: post.status,
       rejectionReason: post.rejectionReason || "",
+      hiddenFromPublic: !!post.hiddenFromPublic,
       category: formatCategory(post.category),
       categoryId: post.category ? post.category._id : null,
       createdAt: post.createdAt,

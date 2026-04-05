@@ -20,6 +20,7 @@
 
   var postId = null;
   var currentUserId = null;
+  var isAdmin = false;
   var editingCommentId = null;
 
   function formatWhen(d) {
@@ -77,6 +78,7 @@
   }
 
   function resolveCurrentUser() {
+    isAdmin = false;
     if (!window.ForumApi || !ForumApi.getToken()) {
       currentUserId = null;
       setCommentFormVisible(false);
@@ -85,10 +87,16 @@
     return ForumApi.me()
       .then(function (me) {
         currentUserId = me && me._id ? String(me._id) : null;
+        var rn =
+          (me && me.roleName) ||
+          (me && me.role && (typeof me.role === "object" ? me.role.name : me.role)) ||
+          "";
+        isAdmin = String(rn).toUpperCase() === "ADMIN";
         setCommentFormVisible(!!currentUserId);
       })
       .catch(function () {
         currentUserId = null;
+        isAdmin = false;
         setCommentFormVisible(false);
       });
   }
@@ -141,21 +149,32 @@
     li.appendChild(head);
     li.appendChild(body);
 
-    if (isOwnComment(c)) {
+    if (isOwnComment(c) || isAdmin) {
       var actions = document.createElement("div");
       actions.className = "comment-card__actions";
-      var btnEdit = document.createElement("button");
-      btnEdit.type = "button";
-      btnEdit.className = "btn btn-ghost btn-sm comment-edit-btn";
-      btnEdit.textContent = "Sửa";
-      btnEdit.setAttribute("data-id", String(c._id));
-      var btnDel = document.createElement("button");
-      btnDel.type = "button";
-      btnDel.className = "btn btn-ghost btn-sm comment-delete-btn";
-      btnDel.textContent = "Xóa";
-      btnDel.setAttribute("data-id", String(c._id));
-      actions.appendChild(btnEdit);
-      actions.appendChild(btnDel);
+      if (isOwnComment(c)) {
+        var btnEdit = document.createElement("button");
+        btnEdit.type = "button";
+        btnEdit.className = "btn btn-ghost btn-sm comment-edit-btn";
+        btnEdit.textContent = "Sửa";
+        btnEdit.setAttribute("data-id", String(c._id));
+        var btnDel = document.createElement("button");
+        btnDel.type = "button";
+        btnDel.className = "btn btn-ghost btn-sm comment-delete-btn";
+        btnDel.textContent = "Xóa";
+        btnDel.setAttribute("data-id", String(c._id));
+        actions.appendChild(btnEdit);
+        actions.appendChild(btnDel);
+      }
+      if (isAdmin) {
+        var btnMod = document.createElement("button");
+        btnMod.type = "button";
+        btnMod.className = "btn btn-ghost btn-sm comment-admin-delete-btn";
+        btnMod.textContent = "Gỡ (mod)";
+        btnMod.setAttribute("data-id", String(c._id));
+        btnMod.setAttribute("title", "Xóa bình luận (quản trị)");
+        actions.appendChild(btnMod);
+      }
       li.appendChild(actions);
     }
 
@@ -240,6 +259,21 @@
     if (t.classList.contains("comment-delete-btn") && editId) {
       if (!window.confirm("Xóa bình luận này?")) return;
       ForumApi.deleteComment(editId)
+        .then(function () {
+          return loadComments();
+        })
+        .catch(function (err) {
+          alert(err.message || "Không xóa được.");
+        });
+      return;
+    }
+    if (t.classList.contains("comment-admin-delete-btn") && editId) {
+      if (!window.confirm("Xóa bình luận này (quản trị)? Thành viên sẽ không còn thấy trên trang công khai.")) return;
+      if (!ForumApi.adminDeleteComment) {
+        alert("Thiếu API xóa bình luận quản trị.");
+        return;
+      }
+      ForumApi.adminDeleteComment(editId)
         .then(function () {
           return loadComments();
         })

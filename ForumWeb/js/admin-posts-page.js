@@ -143,6 +143,12 @@
     badge.className = statusClass(p.status);
     badge.textContent = statusLabel(p.status);
     tdSt.appendChild(badge);
+    if (p.status === "APPROVED" && p.hiddenFromPublic) {
+      var hidNote = document.createElement("div");
+      hidNote.className = "admin-hidden-note muted";
+      hidNote.textContent = "Đã gỡ công khai";
+      tdSt.appendChild(hidNote);
+    }
 
     var tdTime = document.createElement("td");
     tdTime.className = "muted";
@@ -152,13 +158,34 @@
     tdAct.className = "my-posts-actions";
 
     if (p.status === "APPROVED") {
-      var aView = document.createElement("a");
-      aView.className = "btn btn-outline btn-sm";
-      aView.href = "post.html?id=" + encodeURIComponent(p._id);
-      aView.textContent = "Xem bài";
-      aView.target = "_blank";
-      aView.rel = "noopener";
-      tdAct.appendChild(aView);
+      if (!p.hiddenFromPublic) {
+        var aView = document.createElement("a");
+        aView.className = "btn btn-outline btn-sm";
+        aView.href = "post.html?id=" + encodeURIComponent(p._id);
+        aView.textContent = "Xem bài";
+        aView.target = "_blank";
+        aView.rel = "noopener";
+        tdAct.appendChild(aView);
+        var btnUn = document.createElement("button");
+        btnUn.type = "button";
+        btnUn.className = "btn btn-outline btn-sm admin-unpublish-btn";
+        btnUn.textContent = "Gỡ công khai";
+        btnUn.setAttribute("data-id", String(p._id));
+        tdAct.appendChild(btnUn);
+      } else {
+        var btnRep = document.createElement("button");
+        btnRep.type = "button";
+        btnRep.className = "btn btn-primary btn-sm admin-republish-btn";
+        btnRep.textContent = "Hiển thị lại";
+        btnRep.setAttribute("data-id", String(p._id));
+        tdAct.appendChild(btnRep);
+      }
+      var btnDelPost = document.createElement("button");
+      btnDelPost.type = "button";
+      btnDelPost.className = "btn btn-ghost btn-sm admin-delete-post-btn";
+      btnDelPost.textContent = "Xóa bài";
+      btnDelPost.setAttribute("data-id", String(p._id));
+      tdAct.appendChild(btnDelPost);
     }
 
     if (p.status === "PENDING") {
@@ -318,6 +345,47 @@
 
       if (t.classList.contains("admin-reject-btn")) {
         openRejectModal(id);
+        return;
+      }
+
+      if (t.classList.contains("admin-unpublish-btn")) {
+        if (!window.confirm("Gỡ bài này khỏi trang chủ / trang bài? Người dùng sẽ không mở được link công khai.")) return;
+        ForumApi.unpublishAdminPost(id)
+          .then(function () {
+            return loadList();
+          })
+          .catch(function (err) {
+            alert(err.message || "Thao tác thất bại.");
+          });
+        return;
+      }
+
+      if (t.classList.contains("admin-republish-btn")) {
+        if (!window.confirm("Hiển thị lại bài này trên diễn đàn?")) return;
+        ForumApi.republishAdminPost(id)
+          .then(function () {
+            return loadList();
+          })
+          .catch(function (err) {
+            alert(err.message || "Thao tác thất bại.");
+          });
+        return;
+      }
+
+      if (t.classList.contains("admin-delete-post-btn")) {
+        if (
+          !window.confirm(
+            "Xóa hẳn bài này và mọi bình luận? Hành động không hoàn tác."
+          )
+        )
+          return;
+        ForumApi.deleteAdminPost(id)
+          .then(function () {
+            return loadList();
+          })
+          .catch(function (err) {
+            alert(err.message || "Thao tác thất bại.");
+          });
       }
     });
   }

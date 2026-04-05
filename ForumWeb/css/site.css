@@ -904,6 +904,12 @@ button.cat-pill--btn:hover:not(.is-active) {
   line-height: 1.45;
 }
 
+.admin-hidden-note {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 .admin-queue-line {
   margin-top: 0.75rem;
   font-size: 0.9rem;

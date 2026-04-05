@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 const Post = require("../models/posts");
 const Comment = require("../models/comments");
+const { publicApprovedFilter } = require("../utils/publicPostFilter");
 const { checkLogin } = require("../middleware/authHandler");
 
 const router = express.Router({ mergeParams: true });
@@ -37,7 +38,7 @@ router.get("/", async function (req, res, next) {
       return res.status(400).json({ message: "ID bài viết không hợp lệ." });
     }
 
-    const approved = await Post.exists({ _id: postId, status: "APPROVED" });
+    const approved = await Post.exists(Object.assign({ _id: postId }, publicApprovedFilter));
     if (!approved) {
       return res.status(404).json({ message: "Không tìm thấy bài viết hoặc bài chưa được duyệt." });
     }
@@ -80,7 +81,7 @@ router.post("/", checkLogin, createCommentValidation, async function (req, res, 
       return res.status(400).json({ message: "ID bài viết không hợp lệ." });
     }
 
-    const approved = await Post.exists({ _id: postId, status: "APPROVED" });
+    const approved = await Post.exists(Object.assign({ _id: postId }, publicApprovedFilter));
     if (!approved) {
       return res.status(404).json({ message: "Không tìm thấy bài viết hoặc bài chưa được duyệt." });
     }

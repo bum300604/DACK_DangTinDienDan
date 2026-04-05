@@ -68,6 +68,8 @@ app.use("/api/me/posts", require("./middleware/dbReady"), require("./routes/mePo
 
 app.use("/api/admin/posts", require("./middleware/dbReady"), require("./routes/adminPosts"));
 
+app.use("/api/admin/comments", require("./middleware/dbReady"), require("./routes/adminComments"));
+
 app.use(express.static(path.join(__dirname, "..", "ForumWeb")));
 
 app.use(function (req, res, next) {

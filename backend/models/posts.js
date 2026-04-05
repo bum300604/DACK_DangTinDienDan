@@ -38,6 +38,12 @@ const postSchema = new mongoose.Schema(
       ref: "user",
       required: true,
     },
+    /** Admin gỡ khỏi trang công khai (bài vẫn APPROVED, không hiện ở Task 3). */
+    hiddenFromPublic: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   { timestamps: true }
 );

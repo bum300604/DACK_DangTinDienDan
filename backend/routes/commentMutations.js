@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 const Post = require("../models/posts");
 const Comment = require("../models/comments");
+const { publicApprovedFilter } = require("../utils/publicPostFilter");
 const { checkLogin } = require("../middleware/authHandler");
 
 const router = express.Router();
@@ -60,7 +61,7 @@ router.patch("/:commentId", checkLogin, patchValidation, async function (req, re
       return res.status(403).json({ message: "Bạn chỉ được sửa bình luận của chính mình." });
     }
 
-    const postOk = await Post.exists({ _id: comment.post, status: "APPROVED" });
+    const postOk = await Post.exists(Object.assign({ _id: comment.post }, publicApprovedFilter));
     if (!postOk) {
       return res.status(400).json({ message: "Bài viết không còn hiển thị công khai." });
     }
