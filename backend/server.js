@@ -38,6 +38,14 @@ mongoose.connection.on("disconnected", function () {
 
 mongoose
   .connect(mongoUri, mongoConnectOptions)
+  .then(async function () {
+    try {
+      await require("./utils/forumCategorySetup")();
+      console.log("Forum category setup OK");
+    } catch (e) {
+      console.error("forumCategorySetup:", e);
+    }
+  })
   .catch(function (err) {
     mongoStatus.setLastError(err);
     console.error("MongoDB connect failed:", err.message || err);

@@ -6,6 +6,8 @@
   "scripts": {
     "seed:roles": "node ./scripts/seedRoles.js",
     "seed:admin": "node ./scripts/seedAdmin.js",
+    "seed:demo-posts": "node ./scripts/seedDemoPosts.js",
+    "seed:categories": "node ./scripts/seedCategories.js",
     "verify:mongo": "node ./scripts/verifyMongo.js",
     "dev": "nodemon ./server.js",
     "start": "node ./server.js"

@@ -40,6 +40,18 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", require("./middleware/dbReady"), require("./routes/auth"));
 
+app.use(
+  "/api/public/categories",
+  require("./middleware/dbReady"),
+  require("./routes/categoriesPublic")
+);
+
+app.use(
+  "/api/public/posts",
+  require("./middleware/dbReady"),
+  require("./routes/postsPublic")
+);
+
 app.use(express.static(path.join(__dirname, "..", "ForumWeb")));
 
 app.use(function (req, res, next) {

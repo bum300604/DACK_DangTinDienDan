@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chi tiết bài viết — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="post-read-wrap">
+      <a class="post-back" href="index.html" id="post-back-link">← Về danh sách tin</a>
+
+      <article class="post-article" id="post-article" hidden>
+        <h1 id="post-title"></h1>
+        <div class="post-meta" id="post-meta"></div>
+        <p class="post-content" id="post-content"></p>
+      </article>
+
+      <div id="post-error" class="card card-pad d-none">
+        <p class="alert alert-danger" id="post-error-msg" style="margin: 0"></p>
+      </div>
+    </div>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="#">Điều khoản</a>
+      <a href="#">Liên hệ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/post-read.js"></script>
+  </body>
+</html>

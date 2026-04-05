@@ -108,6 +108,28 @@
         body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword }),
       });
     },
+
+    /** Danh sách chuyên mục (id dùng làm categoryId khi lọc). */
+    listPublicCategories: function () {
+      return apiFetch("/api/public/categories");
+    },
+
+    /** Danh sách bài đã duyệt (công khai). params: { q, categoryId, page, limit } */
+    listPublicPosts: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.q) q.set("q", params.q);
+      if (params.categoryId && params.categoryId !== "all") q.set("categoryId", params.categoryId);
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch("/api/public/posts" + (qs ? "?" + qs : ""));
+    },
+
+    /** Một bài đã duyệt theo id */
+    getPublicPost: function (id) {
+      return apiFetch("/api/public/posts/" + encodeURIComponent(id));
+    },
   };
 
   window.ForumApi = ForumApi;

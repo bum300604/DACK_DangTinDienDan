@@ -254,6 +254,17 @@ a:hover {
   border-color: #fed7aa;
 }
 
+button.cat-pill--btn {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+button.cat-pill--btn:hover:not(.is-active) {
+  background: #e5e7eb;
+  color: var(--text);
+}
+
 /* —— Layout —— */
 .forum-layout {
   max-width: 1100px;
@@ -389,6 +400,74 @@ a:hover {
   display: block;
   margin-bottom: 0.35rem;
   font-size: 1rem;
+}
+
+.forum-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1.125rem;
+  border-top: 1px solid var(--border);
+  background: #fafafa;
+}
+
+.forum-pagination__nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.forum-pagination__info {
+  font-size: 0.8125rem;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* —— Trang đọc bài (post.html) —— */
+.post-read-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.5rem;
+}
+
+.post-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.post-article {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.35rem 1.35rem 1.75rem;
+}
+
+.post-article h1 {
+  margin: 0 0 0.75rem;
+  font-size: 1.35rem;
+  line-height: 1.35;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.post-article .post-meta {
+  margin-bottom: 1.25rem;
+}
+
+.post-content {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
 }
 
 /* —— Sidebar widgets —— */
