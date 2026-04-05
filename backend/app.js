@@ -74,6 +74,8 @@ app.use("/api/admin/comments", require("./middleware/dbReady"), require("./route
 
 app.use("/api/admin/reports", require("./middleware/dbReady"), require("./routes/adminReports"));
 
+app.use("/api/admin/categories", require("./middleware/dbReady"), require("./routes/adminCategories"));
+
 app.use(express.static(path.join(__dirname, "..", "ForumWeb")));
 
 app.use(function (req, res, next) {

@@ -290,6 +290,31 @@
         body: JSON.stringify(payload),
       });
     },
+
+    /** Chuyên mục — ADMIN */
+    listAdminCategories: function () {
+      return apiFetch("/api/admin/categories");
+    },
+
+    createAdminCategory: function (name) {
+      return apiFetch("/api/admin/categories", {
+        method: "POST",
+        body: JSON.stringify({ name: name }),
+      });
+    },
+
+    patchAdminCategory: function (id, payload) {
+      return apiFetch("/api/admin/categories/" + encodeURIComponent(id), {
+        method: "PATCH",
+        body: JSON.stringify(payload || {}),
+      });
+    },
+
+    deleteAdminCategory: function (id) {
+      return apiFetch("/api/admin/categories/" + encodeURIComponent(id), {
+        method: "DELETE",
+      });
+    },
   };
 
   window.ForumApi = ForumApi;
