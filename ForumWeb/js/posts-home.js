@@ -9,6 +9,7 @@
   var emptyEl = document.getElementById("post-list-empty");
   var pagEl = document.getElementById("forum-pagination");
   var catBar = document.getElementById("forum-cats-inner");
+  var featuredBlock = document.getElementById("featured-block");
 
   var loadedCategories = [];
 
@@ -16,7 +17,7 @@
     q: "",
     categoryId: "all",
     page: 1,
-    limit: 10,
+    limit: 6,
   };
 
   function getParamsFromUrl() {
@@ -218,6 +219,59 @@
     listEl.appendChild(ul);
   }
 
+  function renderFeatured(posts) {
+    if (!featuredBlock) return;
+    featuredBlock.innerHTML = "";
+
+    if (!posts || !posts.length) {
+      var empty = document.createElement("p");
+      empty.className = "card-muted featured-block__hint";
+      empty.textContent = "Chưa có tin đăng đã duyệt.";
+      featuredBlock.appendChild(empty);
+      return;
+    }
+
+    var ul = document.createElement("ul");
+    ul.className = "featured-list";
+    ul.setAttribute("aria-label", "Tin nổi bật gần đây");
+
+    for (var i = 0; i < posts.length; i++) {
+      var p = posts[i];
+      var li = document.createElement("li");
+      li.className = "featured-list__item";
+
+      var a = document.createElement("a");
+      a.href = "post.html?id=" + encodeURIComponent(p._id);
+      a.textContent = p.title || "(Không tiêu đề)";
+
+      var meta = document.createElement("span");
+      meta.className = "featured-list__meta";
+      var bits = [];
+      if (p.category && p.category.name) bits.push(p.category.name);
+      var when = formatWhen(p.createdAt);
+      if (when) bits.push(when);
+      meta.textContent = bits.join(" · ");
+
+      li.appendChild(a);
+      li.appendChild(meta);
+      ul.appendChild(li);
+    }
+
+    featuredBlock.appendChild(ul);
+  }
+
+  function loadFeatured() {
+    if (!featuredBlock || !window.ForumApi || !ForumApi.listPublicPosts) return;
+    ForumApi.listPublicPosts({ page: 1, limit: 5 })
+      .then(function (data) {
+        renderFeatured((data && data.posts) || []);
+      })
+      .catch(function () {
+        featuredBlock.innerHTML =
+          '<p class="card-muted featured-block__hint">Không tải được mục nổi bật.</p>';
+      });
+  }
+
   function escapeHtml(s) {
     var t = document.createElement("div");
     t.textContent = s == null ? "" : String(s);
@@ -309,6 +363,7 @@
         syncSearchInput();
         syncCatPills();
         load();
+        loadFeatured();
       })
       .catch(function (err) {
         if (catBar) {
