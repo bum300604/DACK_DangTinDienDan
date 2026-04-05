@@ -363,7 +363,16 @@
       );
     },
 
-    sendConversationMessage: function (id, text) {
+    sendConversationMessage: function (id, text, imageFile) {
+      if (imageFile) {
+        var fd = new FormData();
+        if (text) fd.append("body", text);
+        fd.append("image", imageFile);
+        return apiFetch("/api/me/conversations/" + encodeURIComponent(id) + "/messages", {
+          method: "POST",
+          body: fd,
+        });
+      }
       return apiFetch("/api/me/conversations/" + encodeURIComponent(id) + "/messages", {
         method: "POST",
         body: JSON.stringify({ body: text }),

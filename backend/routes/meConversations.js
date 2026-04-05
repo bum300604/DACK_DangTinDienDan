@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const { body, validationResult } = require("express-validator");
 const Conversation = require("../models/conversations");
 const Message = require("../models/messages");
 const Post = require("../models/posts");
 const User = require("../models/users");
 const Role = require("../models/roles");
 const { checkLogin } = require("../middleware/authHandler");
+const { uploadMessageImageIfMultipart } = require("../middleware/messageImageUpload");
+const { publicUrlForFilename } = require("../utils/messageImages");
 const { publicApprovedFilter } = require("../utils/publicPostFilter");
 
 const router = express.Router();
@@ -211,14 +212,17 @@ router.get("/", checkLogin, async function (req, res, next) {
   }
 });
 
-const sendValidation = [
-  body("body")
-    .trim()
-    .notEmpty()
-    .withMessage("Nội dung tin nhắn không được để trống.")
-    .isLength({ max: 4000 })
-    .withMessage("Tối đa 4000 ký tự."),
-];
+function messagePreview(text, imageUrl) {
+  const t = String(text || "").trim();
+  if (imageUrl && !t) return "Ảnh";
+  if (imageUrl && t) {
+    var prefix = "Ảnh · ";
+    var max = 160 - prefix.length;
+    if (max < 8) max = 8;
+    return t.length > max ? prefix + t.slice(0, max) + "…" : prefix + t;
+  }
+  return t.length > 160 ? t.slice(0, 160) + "…" : t;
+}
 
 async function loadConversationForMember(convId, userId) {
   if (!mongoose.isValidObjectId(convId)) return null;
@@ -261,6 +265,7 @@ router.get("/:id/messages", checkLogin, async function (req, res, next) {
       return {
         _id: m._id,
         body: m.body,
+        imageUrl: m.imageUrl || null,
         createdAt: m.createdAt,
         sender: formatUserMini(m.sender) || { _id: sid, displayName: "Thành viên" },
         isMine: String(sid) === String(req.userId),
@@ -281,14 +286,11 @@ router.get("/:id/messages", checkLogin, async function (req, res, next) {
 
 /**
  * POST /api/me/conversations/:id/messages
+ * JSON: { body } — chỉ chữ (body bắt buộc).
+ * multipart/form-data: body (tùy chọn) + image (file ảnh) — cần ít nhất chữ hoặc ảnh.
  */
-router.post("/:id/messages", checkLogin, sendValidation, async function (req, res, next) {
+router.post("/:id/messages", checkLogin, uploadMessageImageIfMultipart, async function (req, res, next) {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg });
-    }
-
     const convId = req.params.id;
     const conv = await Conversation.findById(convId);
     if (!conv) {
@@ -299,14 +301,35 @@ router.post("/:id/messages", checkLogin, sendValidation, async function (req, re
       return res.status(403).json({ message: "Bạn không tham gia hội thoại này." });
     }
 
-    const text = String(req.body.body).trim();
+    const isMultipart = String(req.headers["content-type"] || "").indexOf("multipart/form-data") !== -1;
+    const text = String(req.body.body != null ? req.body.body : "").trim();
+    var imageUrl = null;
+    if (req.file && req.file.filename) {
+      imageUrl = publicUrlForFilename(req.file.filename);
+    }
+
+    if (isMultipart) {
+      if (!text && !imageUrl) {
+        return res.status(400).json({ message: "Cần nội dung chữ hoặc ảnh." });
+      }
+    } else {
+      if (!text) {
+        return res.status(400).json({ message: "Nội dung tin nhắn không được để trống." });
+      }
+    }
+
+    if (text.length > 4000) {
+      return res.status(400).json({ message: "Tối đa 4000 ký tự." });
+    }
+
     const msg = await Message.create({
       conversation: conv._id,
       sender: req.userId,
       body: text,
+      imageUrl: imageUrl || null,
     });
 
-    const preview = text.length > 160 ? text.slice(0, 160) + "…" : text;
+    const preview = messagePreview(text, imageUrl);
     conv.lastMessageAt = msg.createdAt || new Date();
     conv.lastMessagePreview = preview;
     conv.lastMessageSender = req.userId;
@@ -321,6 +344,7 @@ router.post("/:id/messages", checkLogin, sendValidation, async function (req, re
       message: {
         _id: populated._id,
         body: populated.body,
+        imageUrl: populated.imageUrl || null,
         createdAt: populated.createdAt,
         sender: formatUserMini(populated.sender),
         isMine: true,

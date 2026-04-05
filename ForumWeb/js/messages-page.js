@@ -11,10 +11,16 @@
   var threadEl = document.getElementById("chat-thread");
   var form = document.getElementById("chat-form");
   var input = document.getElementById("chat-input");
+  var imageInput = document.getElementById("chat-image-input");
+  var btnImage = document.getElementById("chat-btn-image");
+  var previewWrap = document.getElementById("chat-form-preview-wrap");
+  var previewImg = document.getElementById("chat-image-preview");
+  var previewRemove = document.getElementById("chat-image-preview-remove");
   var alertEl = document.getElementById("chat-alert");
   var btnAdmin = document.getElementById("chat-btn-admin");
 
   var activeId = null;
+  var previewObjectUrl = null;
   var pollTimer = null;
   var conversationsCache = [];
 
@@ -68,6 +74,35 @@
     threadEl.scrollTop = threadEl.scrollHeight;
   }
 
+  function clearImagePreview() {
+    if (previewObjectUrl) {
+      try {
+        URL.revokeObjectURL(previewObjectUrl);
+      } catch (e) {}
+      previewObjectUrl = null;
+    }
+    if (previewImg) {
+      previewImg.removeAttribute("src");
+      previewImg.removeAttribute("alt");
+    }
+    if (previewWrap) previewWrap.classList.add("d-none");
+    if (imageInput) imageInput.value = "";
+  }
+
+  function showImagePreview(file) {
+    if (!file || !previewImg || !previewWrap) return;
+    if (previewObjectUrl) {
+      try {
+        URL.revokeObjectURL(previewObjectUrl);
+      } catch (e) {}
+      previewObjectUrl = null;
+    }
+    previewObjectUrl = URL.createObjectURL(file);
+    previewImg.src = previewObjectUrl;
+    previewImg.alt = "Ảnh đính kèm";
+    previewWrap.classList.remove("d-none");
+  }
+
   function renderThread(messages) {
     if (!threadEl) return;
     threadEl.innerHTML = "";
@@ -82,7 +117,20 @@
       meta.textContent = (m.isMine ? "Bạn" : who) + " · " + formatWhen(m.createdAt);
       var body = document.createElement("div");
       body.className = "chat-msg__body";
-      body.textContent = m.body || "";
+      if (m.imageUrl) {
+        var img = document.createElement("img");
+        img.className = "chat-msg__image";
+        img.src = m.imageUrl;
+        img.alt = "Ảnh đính kèm";
+        img.loading = "lazy";
+        body.appendChild(img);
+      }
+      if (m.body) {
+        var textPart = document.createElement("div");
+        textPart.className = m.imageUrl ? "chat-msg__text" : "";
+        textPart.textContent = m.body;
+        body.appendChild(textPart);
+      }
       row.appendChild(meta);
       row.appendChild(body);
       threadEl.appendChild(row);
@@ -109,6 +157,7 @@
 
   function openChat(convSummary) {
     if (!convSummary || !convSummary._id) return;
+    clearImagePreview();
     activeId = String(convSummary._id);
     setQueryC(activeId);
     if (placeholder) placeholder.classList.add("d-none");
@@ -136,6 +185,7 @@
   }
 
   function closeChatUi() {
+    clearImagePreview();
     activeId = null;
     stopPoll();
     if (placeholder) placeholder.classList.remove("d-none");
@@ -236,16 +286,38 @@
       window.location.href = "login.html";
     });
 
+  if (btnImage && imageInput) {
+    btnImage.addEventListener("click", function () {
+      imageInput.click();
+    });
+  }
+
+  if (imageInput) {
+    imageInput.addEventListener("change", function () {
+      var f = imageInput.files && imageInput.files[0];
+      if (f) showImagePreview(f);
+      else clearImagePreview();
+    });
+  }
+
+  if (previewRemove) {
+    previewRemove.addEventListener("click", function () {
+      clearImagePreview();
+    });
+  }
+
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!activeId || !input) return;
       var text = String(input.value || "").trim();
-      if (!text) return;
+      var file = imageInput && imageInput.files && imageInput.files[0];
+      if (!text && !file) return;
       showAlert("");
-      ForumApi.sendConversationMessage(activeId, text)
+      ForumApi.sendConversationMessage(activeId, text || "", file || null)
         .then(function () {
           input.value = "";
+          clearImagePreview();
           return loadMessages(activeId, true);
         })
         .catch(function (err) {

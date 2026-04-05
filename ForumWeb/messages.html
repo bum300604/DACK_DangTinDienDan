@@ -59,16 +59,25 @@
             </header>
             <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
             <form id="chat-form" class="chat-form">
-              <label class="sr-only" for="chat-input">Tin nhắn</label>
-              <textarea
-                id="chat-input"
-                class="chat-form__input"
-                rows="2"
-                maxlength="4000"
-                placeholder="Viết tin nhắn…"
-                required
-              ></textarea>
-              <button type="submit" class="btn btn-primary">Gửi</button>
+              <input type="file" id="chat-image-input" class="d-none" accept="image/jpeg,image/png,image/gif,image/webp" />
+              <div id="chat-form-preview-wrap" class="chat-form__preview-wrap d-none" aria-live="polite">
+                <img id="chat-image-preview" class="chat-form__preview-img" alt="" />
+                <button type="button" class="chat-form__preview-remove" id="chat-image-preview-remove" title="Bỏ ảnh" aria-label="Bỏ ảnh đính kèm">
+                  ×
+                </button>
+              </div>
+              <div class="chat-form__row">
+                <label class="sr-only" for="chat-input">Tin nhắn</label>
+                <textarea
+                  id="chat-input"
+                  class="chat-form__input"
+                  rows="2"
+                  maxlength="4000"
+                  placeholder="Viết tin nhắn…"
+                ></textarea>
+                <button type="button" class="btn btn-outline" id="chat-btn-image" title="Đính kèm ảnh">Ảnh</button>
+                <button type="submit" class="btn btn-primary">Gửi</button>
+              </div>
             </form>
           </div>
         </section>
