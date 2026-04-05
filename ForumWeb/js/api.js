@@ -222,6 +222,36 @@
         body: JSON.stringify({ reason: reason }),
       });
     },
+
+    /** Gỡ bài đã đăng khỏi công khai (APPROVED) — ADMIN */
+    unpublishAdminPost: function (id) {
+      return apiFetch("/api/admin/posts/" + encodeURIComponent(id) + "/unpublish", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+    },
+
+    /** Hiển thị lại bài đã gỡ — ADMIN */
+    republishAdminPost: function (id) {
+      return apiFetch("/api/admin/posts/" + encodeURIComponent(id) + "/republish", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+    },
+
+    /** Xóa hẳn bài (và comment) — ADMIN */
+    deleteAdminPost: function (id) {
+      return apiFetch("/api/admin/posts/" + encodeURIComponent(id), {
+        method: "DELETE",
+      });
+    },
+
+    /** Xóa bình luận — ADMIN */
+    adminDeleteComment: function (commentId) {
+      return apiFetch("/api/admin/comments/" + encodeURIComponent(commentId), {
+        method: "DELETE",
+      });
+    },
   };
 
   window.ForumApi = ForumApi;

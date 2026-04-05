@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Post = require("../models/posts");
 const Category = require("../models/categories");
+const { publicApprovedFilter } = require("../utils/publicPostFilter");
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ router.get("/", async function (req, res, next) {
     const q = String(req.query.q || "").trim();
     const categoryIdRaw = String(req.query.categoryId || "").trim();
 
-    const filter = { status: "APPROVED" };
+    const filter = Object.assign({}, publicApprovedFilter);
 
     if (categoryIdRaw && categoryIdRaw !== "all") {
       if (!mongoose.isValidObjectId(categoryIdRaw)) {
@@ -110,7 +111,7 @@ router.get("/:id", async function (req, res, next) {
       return res.status(400).json({ message: "ID bài viết không hợp lệ." });
     }
 
-    const post = await Post.findOne({ _id: id, status: "APPROVED" })
+    const post = await Post.findOne(Object.assign({ _id: id }, publicApprovedFilter))
       .populate({ path: "author", select: "username displayName" })
       .populate({ path: "category", select: "name" })
       .lean();

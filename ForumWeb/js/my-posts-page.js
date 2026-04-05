@@ -76,11 +76,19 @@
     tdAct.className = "my-posts-actions";
 
     if (p.status === "APPROVED") {
-      var aView = document.createElement("a");
-      aView.className = "btn btn-outline btn-sm";
-      aView.href = "post.html?id=" + encodeURIComponent(p._id);
-      aView.textContent = "Xem bài";
-      tdAct.appendChild(aView);
+      if (!p.hiddenFromPublic) {
+        var aView = document.createElement("a");
+        aView.className = "btn btn-outline btn-sm";
+        aView.href = "post.html?id=" + encodeURIComponent(p._id);
+        aView.textContent = "Xem bài";
+        tdAct.appendChild(aView);
+      } else {
+        var off = document.createElement("span");
+        off.className = "muted";
+        off.style.fontSize = "0.8125rem";
+        off.textContent = "Đã gỡ khỏi công khai";
+        tdAct.appendChild(off);
+      }
     }
 
     if (p.canEdit) {

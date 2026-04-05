@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 const Post = require("../models/posts");
+const Comment = require("../models/comments");
 const { checkLogin, checkRole } = require("../middleware/authHandler");
 
 const router = express.Router();
@@ -86,6 +87,7 @@ router.get(
           excerpt: excerptFrom(p.content, 200),
           status: p.status,
           rejectionReason: p.rejectionReason || "",
+          hiddenFromPublic: p.status === "APPROVED" ? !!p.hiddenFromPublic : false,
           category: formatCategory(p.category),
           author: formatAuthor(p.author),
           createdAt: p.createdAt,
@@ -128,6 +130,7 @@ router.post("/:id/approve", checkLogin, checkRole("ADMIN"), async function (req,
 
     post.status = "APPROVED";
     post.rejectionReason = "";
+    post.hiddenFromPublic = false;
     await post.save();
 
     const populated = await Post.findById(post._id)
@@ -206,5 +209,94 @@ router.post(
     }
   }
 );
+
+/**
+ * POST /api/admin/posts/:id/unpublish
+ * Gỡ bài đã đăng khỏi kênh công khai (ẩn — Task 7).
+ */
+router.post("/:id/unpublish", checkLogin, checkRole("ADMIN"), async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "ID bài viết không hợp lệ." });
+    }
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Không tìm thấy bài viết." });
+    }
+
+    if (post.status !== "APPROVED") {
+      return res.status(400).json({ message: "Chỉ gỡ được bài đã duyệt và đang đăng." });
+    }
+
+    post.hiddenFromPublic = true;
+    await post.save();
+
+    res.json({
+      message: "Đã gỡ bài khỏi trang công khai.",
+      post: { _id: post._id, title: post.title, hiddenFromPublic: true },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * POST /api/admin/posts/:id/republish
+ * Hiển thị lại bài đã gỡ (công khai trở lại).
+ */
+router.post("/:id/republish", checkLogin, checkRole("ADMIN"), async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "ID bài viết không hợp lệ." });
+    }
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Không tìm thấy bài viết." });
+    }
+
+    if (post.status !== "APPROVED") {
+      return res.status(400).json({ message: "Chỉ khôi phục hiển thị cho bài đã duyệt." });
+    }
+
+    post.hiddenFromPublic = false;
+    await post.save();
+
+    res.json({
+      message: "Đã hiển thị lại bài công khai.",
+      post: { _id: post._id, title: post.title, hiddenFromPublic: false },
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * DELETE /api/admin/posts/:id
+ * Xóa hẳn bài (và bình luận) — quản trị.
+ */
+router.delete("/:id", checkLogin, checkRole("ADMIN"), async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: "ID bài viết không hợp lệ." });
+    }
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Không tìm thấy bài viết." });
+    }
+
+    await Comment.deleteMany({ post: id });
+    await Post.deleteOne({ _id: id });
+
+    res.json({ message: "Đã xóa bài viết." });
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;
