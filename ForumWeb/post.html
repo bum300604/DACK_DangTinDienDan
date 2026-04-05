@@ -48,6 +48,32 @@
       <div id="post-error" class="card card-pad d-none">
         <p class="alert alert-danger" id="post-error-msg" style="margin: 0"></p>
       </div>
+
+      <section class="comments-section" id="comments-section" hidden aria-labelledby="comments-heading">
+        <h2 id="comments-heading" class="comments-section__title">Bình luận</h2>
+
+        <div id="comments-login-hint" class="comments-login-hint d-none">
+          <a href="login.html">Đăng nhập</a> để tham gia bình luận.
+        </div>
+
+        <form id="comment-form" class="comment-form d-none">
+          <label class="sr-only" for="comment-input">Nội dung bình luận</label>
+          <textarea
+            id="comment-input"
+            class="comment-form__textarea"
+            rows="3"
+            maxlength="5000"
+            placeholder="Viết bình luận…"
+            required
+          ></textarea>
+          <div class="comment-form__actions">
+            <button type="submit" class="btn btn-primary btn-sm">Gửi bình luận</button>
+          </div>
+        </form>
+
+        <p id="comments-load-error" class="alert alert-danger d-none" role="alert"></p>
+        <ul id="comments-list" class="comments-list" aria-live="polite"></ul>
+      </section>
     </div>
 
     <footer class="forum-footer">
