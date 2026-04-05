@@ -68,6 +68,8 @@ app.use("/api/me/posts", require("./middleware/dbReady"), require("./routes/mePo
 
 app.use("/api/me/reports", require("./middleware/dbReady"), require("./routes/meReports"));
 
+app.use("/api/me/conversations", require("./middleware/dbReady"), require("./routes/meConversations"));
+
 app.use("/api/admin/posts", require("./middleware/dbReady"), require("./routes/adminPosts"));
 
 app.use("/api/admin/comments", require("./middleware/dbReady"), require("./routes/adminComments"));

@@ -18,10 +18,11 @@ function excerptFrom(content, maxLen) {
 }
 
 function formatAuthor(authorDoc) {
-  if (!authorDoc) return { displayName: "Thành viên", username: "" };
+  if (!authorDoc) return { _id: null, displayName: "Thành viên", username: "" };
   const displayName = (authorDoc.displayName && String(authorDoc.displayName).trim()) || "";
   const username = authorDoc.username || "";
   return {
+    _id: authorDoc._id || null,
     displayName: displayName || username || "Thành viên",
     username: username,
   };

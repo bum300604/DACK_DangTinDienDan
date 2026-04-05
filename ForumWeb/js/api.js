@@ -335,6 +335,47 @@
         body: JSON.stringify({ isLocked: !!isLocked }),
       });
     },
+
+    /** Tin nhắn — chat với tác giả bài hoặc quản trị viên */
+    listConversations: function () {
+      return apiFetch("/api/me/conversations");
+    },
+
+    openConversation: function (payload) {
+      return apiFetch("/api/me/conversations", {
+        method: "POST",
+        body: JSON.stringify(payload || {}),
+      });
+    },
+
+    getConversation: function (id) {
+      return apiFetch("/api/me/conversations/" + encodeURIComponent(id));
+    },
+
+    listConversationMessages: function (id, params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch(
+        "/api/me/conversations/" + encodeURIComponent(id) + "/messages" + (qs ? "?" + qs : "")
+      );
+    },
+
+    sendConversationMessage: function (id, text) {
+      return apiFetch("/api/me/conversations/" + encodeURIComponent(id) + "/messages", {
+        method: "POST",
+        body: JSON.stringify({ body: text }),
+      });
+    },
+
+    markConversationRead: function (id) {
+      return apiFetch("/api/me/conversations/" + encodeURIComponent(id) + "/read", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+    },
   };
 
   window.ForumApi = ForumApi;

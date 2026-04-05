@@ -24,6 +24,8 @@
   var isAdmin = false;
   var editingCommentId = null;
 
+  var postChatActions = document.getElementById("post-chat-actions");
+  var chatAuthorBtn = document.getElementById("post-chat-author");
   var postReportActions = document.getElementById("post-report-actions");
   var reportPostOpen = document.getElementById("report-post-open");
   var reportModal = document.getElementById("report-modal");
@@ -104,6 +106,7 @@
   function showError(msg) {
     if (articleEl) articleEl.hidden = true;
     if (commentsSection) commentsSection.hidden = true;
+    if (postChatActions) postChatActions.hidden = true;
     if (postReportActions) postReportActions.hidden = true;
     if (errWrap) errWrap.classList.remove("d-none");
     if (errMsg) errMsg.textContent = msg || "Không tải được bài viết.";
@@ -428,6 +431,31 @@
         contentEl.textContent = post.content || "";
 
         renderAttachments(post.attachments, attachmentsWrap);
+
+        if (postChatActions && chatAuthorBtn && postId) {
+          var authorId = post.author && post.author._id;
+          if (window.ForumApi && ForumApi.getToken() && currentUserId && authorId && String(authorId) !== String(currentUserId)) {
+            postChatActions.hidden = false;
+            chatAuthorBtn.onclick = function () {
+              if (!ForumApi.openConversation) {
+                alert("Thiếu API tin nhắn.");
+                return;
+              }
+              ForumApi.openConversation({ postId: postId })
+                .then(function (data) {
+                  var c = data && data.conversation;
+                  if (c && c._id) {
+                    window.location.href = "messages.html?c=" + encodeURIComponent(c._id);
+                  }
+                })
+                .catch(function (err) {
+                  alert(err.message || "Không mở được chat.");
+                });
+            };
+          } else {
+            postChatActions.hidden = true;
+          }
+        }
 
         articleEl.hidden = false;
         if (errWrap) errWrap.classList.add("d-none");
