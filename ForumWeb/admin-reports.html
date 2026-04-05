@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Báo cáo vi phạm — Quản trị</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">Quản trị</span>
+          <span class="forum-brand__tagline">ĐăngTin Diễn đàn</span>
+        </span>
+      </a>
+      <nav class="nav-actions">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-admin"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo của tôi</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline" href="index.html">Về diễn đàn</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="admin-shell">
+      <div class="admin-layout">
+        <nav class="admin-nav" aria-label="Menu quản trị">
+          <p class="admin-nav-title">Quản lý</p>
+          <a href="profile.html">Hồ sơ cá nhân</a>
+          <a href="my-posts.html">Bài viết của tôi</a>
+          <a href="admin.html">Tổng quan</a>
+          <a href="admin-posts.html">Kiểm duyệt</a>
+          <a href="admin-reports.html" class="is-current">Báo cáo</a>
+          <a href="#" onclick="return false">Thành viên</a>
+        </nav>
+        <div class="admin-panel" id="admin-reports-panel">
+          <h2>Báo cáo vi phạm</h2>
+          <p class="card-muted" id="admin-reports-lead">
+            Xử lý báo cáo từ thành viên. Đánh dấu <strong>Đã xử lý</strong> khi đã có hành động (ví dụ gỡ bài, xóa comment), hoặc <strong>Bác bỏ</strong> nếu không vi phạm.
+          </p>
+
+          <p class="admin-queue-stats" id="admin-reports-pending-line" aria-live="polite">
+            <span><strong id="admin-reports-pending-count">—</strong> báo cáo đang chờ</span>
+          </p>
+
+          <div class="admin-posts-filters" role="tablist" aria-label="Lọc trạng thái">
+            <button type="button" class="btn btn-outline btn-sm admin-report-filter is-active" data-status="PENDING">Chờ xử lý</button>
+            <button type="button" class="btn btn-outline btn-sm admin-report-filter" data-status="RESOLVED">Đã xử lý</button>
+            <button type="button" class="btn btn-outline btn-sm admin-report-filter" data-status="DISMISSED">Đã bác bỏ</button>
+            <button type="button" class="btn btn-outline btn-sm admin-report-filter" data-status="ALL">Tất cả</button>
+          </div>
+
+          <div id="admin-reports-alert" class="alert alert-danger d-none"></div>
+
+          <div id="admin-reports-empty" class="card card-pad d-none">
+            <p class="card-muted" style="margin: 0">Không có báo cáo trong mục này.</p>
+          </div>
+
+          <div class="my-posts-table-wrap">
+            <table class="my-posts-table admin-reports-table" id="admin-reports-table" hidden>
+              <thead>
+                <tr>
+                  <th>Người gửi</th>
+                  <th>Đối tượng</th>
+                  <th>Loại</th>
+                  <th>Chi tiết</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="admin-reports-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn — Quản trị</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/admin-reports-page.js"></script>
+  </body>
+</html>

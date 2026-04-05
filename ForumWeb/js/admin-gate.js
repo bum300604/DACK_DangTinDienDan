@@ -45,6 +45,20 @@
             queueLine.classList.add("d-none");
           });
       }
+
+      var reportsLine = document.getElementById("admin-reports-line");
+      if (reportsLine && ForumApi.getAdminReportStats) {
+        ForumApi.getAdminReportStats()
+          .then(function (s) {
+            var n = s && typeof s.pending === "number" ? s.pending : 0;
+            reportsLine.textContent =
+              "Báo cáo vi phạm đang chờ xử lý: " + n + ". Mở trang Báo cáo để xử lý.";
+            reportsLine.classList.remove("d-none");
+          })
+          .catch(function () {
+            reportsLine.classList.add("d-none");
+          });
+      }
     })
     .catch(function () {
       setMsg("Phiên đăng nhập không hợp lệ.");
