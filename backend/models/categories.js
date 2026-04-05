@@ -5,7 +5,6 @@ const categorySchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Tên chuyên mục là bắt buộc"],
-      unique: true,
       trim: true,
       maxlength: 120,
     },
@@ -15,6 +14,11 @@ const categorySchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+categorySchema.index(
+  { name: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } }
 );
 
 module.exports = mongoose.model("category", categorySchema);
