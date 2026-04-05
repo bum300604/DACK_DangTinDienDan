@@ -252,6 +252,44 @@
         method: "DELETE",
       });
     },
+
+    /** Báo cáo vi phạm — cần đăng nhập */
+    listMyReports: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.page) q.set("page", String(params.page));
+      var qs = q.toString();
+      return apiFetch("/api/me/reports" + (qs ? "?" + qs : ""));
+    },
+
+    createReport: function (payload) {
+      return apiFetch("/api/me/reports", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    },
+
+    /** Báo cáo — ADMIN */
+    getAdminReportStats: function () {
+      return apiFetch("/api/admin/reports/stats");
+    },
+
+    listAdminReports: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.status) q.set("status", params.status);
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch("/api/admin/reports" + (qs ? "?" + qs : ""));
+    },
+
+    patchAdminReport: function (id, payload) {
+      return apiFetch("/api/admin/reports/" + encodeURIComponent(id), {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    },
   };
 
   window.ForumApi = ForumApi;

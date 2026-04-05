@@ -23,6 +23,18 @@
   var isAdmin = false;
   var editingCommentId = null;
 
+  var postReportActions = document.getElementById("post-report-actions");
+  var reportPostOpen = document.getElementById("report-post-open");
+  var reportModal = document.getElementById("report-modal");
+  var reportForm = document.getElementById("report-form");
+  var reportModalHint = document.getElementById("report-modal-hint");
+  var reportModalCancel = document.getElementById("report-modal-cancel");
+  var reportCategory = document.getElementById("report-category");
+  var reportDetail = document.getElementById("report-detail");
+
+  var reportTargetType = "POST";
+  var reportCommentId = null;
+
   function formatWhen(d) {
     if (!d) return "";
     try {
@@ -42,8 +54,34 @@
   function showError(msg) {
     if (articleEl) articleEl.hidden = true;
     if (commentsSection) commentsSection.hidden = true;
+    if (postReportActions) postReportActions.hidden = true;
     if (errWrap) errWrap.classList.remove("d-none");
     if (errMsg) errMsg.textContent = msg || "Không tải được bài viết.";
+  }
+
+  function closeReportModal() {
+    if (reportModal) {
+      reportModal.classList.add("d-none");
+      reportModal.setAttribute("hidden", "hidden");
+    }
+    reportCommentId = null;
+    reportTargetType = "POST";
+  }
+
+  function openReportModal(type, commentId) {
+    reportTargetType = type || "POST";
+    reportCommentId = commentId || null;
+    if (reportModalHint) {
+      reportModalHint.textContent =
+        reportTargetType === "POST"
+          ? "Bạn đang báo cáo nội dung bài viết này."
+          : "Bạn đang báo cáo một bình luận.";
+    }
+    if (reportForm) reportForm.reset();
+    if (reportModal) {
+      reportModal.classList.remove("d-none");
+      reportModal.removeAttribute("hidden");
+    }
   }
 
   function getQueryId() {
@@ -149,6 +187,18 @@
     li.appendChild(head);
     li.appendChild(body);
 
+    if (currentUserId) {
+      var reportRow = document.createElement("div");
+      reportRow.className = "comment-card__report";
+      var btnReport = document.createElement("button");
+      btnReport.type = "button";
+      btnReport.className = "btn btn-ghost btn-sm report-comment-open";
+      btnReport.textContent = "Báo cáo";
+      btnReport.setAttribute("data-id", String(c._id));
+      reportRow.appendChild(btnReport);
+      li.appendChild(reportRow);
+    }
+
     if (isOwnComment(c) || isAdmin) {
       var actions = document.createElement("div");
       actions.className = "comment-card__actions";
@@ -250,6 +300,10 @@
     var t = e.target;
     if (!t || !t.getAttribute) return;
     var editId = t.getAttribute("data-id");
+    if (t.classList.contains("report-comment-open") && editId) {
+      openReportModal("COMMENT", editId);
+      return;
+    }
     if (t.classList.contains("comment-edit-btn") && editId) {
       var card = t.closest(".comment-card");
       var textEl = card ? card.querySelector(".comment-card__text") : null;
@@ -326,6 +380,10 @@
         articleEl.hidden = false;
         if (errWrap) errWrap.classList.add("d-none");
 
+        if (postReportActions) {
+          postReportActions.hidden = !(window.ForumApi && ForumApi.getToken());
+        }
+
         if (commentsSection) commentsSection.hidden = false;
         return loadComments();
       })
@@ -352,6 +410,56 @@
 
     if (commentsList) {
       commentsList.addEventListener("click", onCommentsListClick);
+    }
+
+    if (reportPostOpen) {
+      reportPostOpen.addEventListener("click", function () {
+        openReportModal("POST", null);
+      });
+    }
+    if (reportModalCancel) {
+      reportModalCancel.addEventListener("click", closeReportModal);
+    }
+    if (reportModal) {
+      reportModal.addEventListener("click", function (e) {
+        if (e.target === reportModal) closeReportModal();
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      if (!reportModal || reportModal.classList.contains("d-none")) return;
+      closeReportModal();
+    });
+    if (reportForm) {
+      reportForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!postId || !ForumApi.createReport) {
+          alert("Thiếu API báo cáo.");
+          return;
+        }
+        var cat = reportCategory ? reportCategory.value : "";
+        if (!cat) {
+          alert("Chọn loại vi phạm.");
+          return;
+        }
+        var payload = {
+          targetType: reportTargetType,
+          targetPostId: postId,
+          category: cat,
+          detail: (reportDetail && reportDetail.value) || "",
+        };
+        if (reportTargetType === "COMMENT" && reportCommentId) {
+          payload.targetCommentId = reportCommentId;
+        }
+        ForumApi.createReport(payload)
+          .then(function () {
+            closeReportModal();
+            alert("Đã gửi báo cáo. Ban quản trị sẽ xem xét.");
+          })
+          .catch(function (err) {
+            alert(err.message || "Không gửi được báo cáo.");
+          });
+      });
     }
   }
 })();

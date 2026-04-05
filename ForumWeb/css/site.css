@@ -470,6 +470,16 @@ button.cat-pill--btn:hover:not(.is-active) {
   color: var(--text);
 }
 
+.post-report-actions {
+  margin: 1rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border);
+}
+
+.comment-card__report {
+  margin-top: 0.35rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

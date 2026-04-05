@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Soạn bài — ĐăngTin Diễn đàn</title>
+    <title>Báo cáo của tôi — ĐăngTin Diễn đàn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,7 +30,7 @@
           <span id="nav-user-label" class="muted"></span>
           <span id="nav-role-badge" class="badge badge-user"></span>
           <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
-          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="my-reports.html" aria-current="page">Báo cáo</a>
           <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
           <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
           <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
@@ -38,39 +38,35 @@
       </nav>
     </header>
 
-    <main class="my-post-edit-wrap">
-      <a class="post-back" href="my-posts.html">← Danh sách bài của tôi</a>
-      <h1 id="post-edit-heading">Đăng tin mới</h1>
-      <p id="post-edit-lead" class="auth-lead">
-        Sau khi gửi, bài sẽ ở trạng thái <strong>chờ duyệt</strong> cho đến khi quản trị viên duyệt.
+    <main class="my-posts-wrap">
+      <div class="my-posts-head">
+        <h1>Báo cáo đã gửi</h1>
+        <a class="btn btn-outline" href="index.html">Về trang chủ</a>
+      </div>
+      <p class="auth-lead">
+        Trạng thái <strong>Chờ xử lý</strong> cho đến khi quản trị viên xử lý. Bạn có thể báo cáo bài hoặc bình luận từ trang chi tiết bài viết.
       </p>
 
-      <div id="post-edit-alert" class="alert alert-danger d-none"></div>
-      <div id="post-edit-reject" class="card card-pad post-edit-reject d-none">
-        <p class="post-edit-reject__label">Lý do từ chối lần trước</p>
-        <p id="post-edit-reject-text" class="post-edit-reject__text"></p>
+      <div id="my-reports-alert" class="alert alert-danger d-none"></div>
+
+      <div id="my-reports-empty" class="card card-pad d-none">
+        <p class="card-muted" style="margin: 0">Bạn chưa gửi báo cáo nào.</p>
       </div>
 
-      <form id="post-edit-form" class="post-edit-form">
-        <div class="form-group">
-          <label for="post-title">Tiêu đề</label>
-          <input id="post-title" name="title" type="text" maxlength="200" required autocomplete="off" />
-        </div>
-        <div class="form-group">
-          <label for="post-category">Chuyên mục</label>
-          <select id="post-category" name="categoryId" required>
-            <option value="">— Chọn chuyên mục —</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="post-content">Nội dung</label>
-          <textarea id="post-content" name="content" rows="14" maxlength="50000" required></textarea>
-        </div>
-        <div class="post-edit-actions">
-          <button type="submit" class="btn btn-primary" id="post-edit-submit">Gửi duyệt</button>
-          <a class="btn btn-outline" href="my-posts.html">Hủy</a>
-        </div>
-      </form>
+      <div class="my-posts-table-wrap">
+        <table class="my-posts-table" id="my-reports-table" hidden>
+          <thead>
+            <tr>
+              <th>Đối tượng</th>
+              <th>Loại</th>
+              <th>Trạng thái</th>
+              <th>Gửi lúc</th>
+              <th>Ghi chú quản trị</th>
+            </tr>
+          </thead>
+          <tbody id="my-reports-tbody"></tbody>
+        </table>
+      </div>
     </main>
 
     <footer class="forum-footer">
@@ -80,6 +76,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/my-post-edit-page.js"></script>
+    <script src="js/my-reports-page.js"></script>
   </body>
 </html>
