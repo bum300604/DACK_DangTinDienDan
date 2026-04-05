@@ -47,9 +47,21 @@ app.use(
 );
 
 app.use(
+  "/api/public/posts/:postId/comments",
+  require("./middleware/dbReady"),
+  require("./routes/postComments")
+);
+
+app.use(
   "/api/public/posts",
   require("./middleware/dbReady"),
   require("./routes/postsPublic")
+);
+
+app.use(
+  "/api/public/comments",
+  require("./middleware/dbReady"),
+  require("./routes/commentMutations")
 );
 
 app.use(express.static(path.join(__dirname, "..", "ForumWeb")));

@@ -130,6 +130,34 @@
     getPublicPost: function (id) {
       return apiFetch("/api/public/posts/" + encodeURIComponent(id));
     },
+
+    /** Danh sách bình luận của bài (công khai) */
+    listPostComments: function (postId) {
+      return apiFetch("/api/public/posts/" + encodeURIComponent(postId) + "/comments");
+    },
+
+    /** Thêm bình luận — cần đăng nhập */
+    createPostComment: function (postId, content) {
+      return apiFetch("/api/public/posts/" + encodeURIComponent(postId) + "/comments", {
+        method: "POST",
+        body: JSON.stringify({ content: content }),
+      });
+    },
+
+    /** Sửa bình luận của chính mình */
+    updateComment: function (commentId, content) {
+      return apiFetch("/api/public/comments/" + encodeURIComponent(commentId), {
+        method: "PATCH",
+        body: JSON.stringify({ content: content }),
+      });
+    },
+
+    /** Xóa bình luận của chính mình */
+    deleteComment: function (commentId) {
+      return apiFetch("/api/public/comments/" + encodeURIComponent(commentId), {
+        method: "DELETE",
+      });
+    },
   };
 
   window.ForumApi = ForumApi;
