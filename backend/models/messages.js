@@ -16,9 +16,16 @@ const messageSchema = new mongoose.Schema(
     },
     body: {
       type: String,
-      required: true,
       trim: true,
       maxlength: 4000,
+      default: "",
+    },
+    /** URL ảnh đính kèm (tĩnh dưới /uploads/message-images/). */
+    imageUrl: {
+      type: String,
+      trim: true,
+      maxlength: 512,
+      default: null,
     },
   },
   { timestamps: true }
