@@ -38,20 +38,19 @@
 
     <div class="forum-search-strip">
       <div class="forum-search-inner">
-        <input type="search" name="q" placeholder="Tìm theo tiêu đề hoặc nội dung tin đăng…" disabled />
-        <button type="button" class="btn btn-primary" disabled>Tìm kiếm</button>
+        <input
+          type="search"
+          name="q"
+          autocomplete="off"
+          placeholder="Tìm theo tiêu đề hoặc nội dung tin đăng…"
+        />
+        <button type="button" class="btn btn-primary">Tìm kiếm</button>
       </div>
     </div>
 
     <nav class="forum-cats" aria-label="Chuyên mục">
-      <div class="forum-cats-inner">
-        <span class="cat-pill is-active">Tất cả</span>
-        <span class="cat-pill">Mua bán</span>
-        <span class="cat-pill">Việc làm</span>
-        <span class="cat-pill">Nhà đất</span>
-        <span class="cat-pill">Điện tử</span>
-        <span class="cat-pill">Xe cộ</span>
-        <span class="cat-pill">Dịch vụ</span>
+      <div class="forum-cats-inner" id="forum-cats-inner">
+        <span class="muted" style="padding: 0.35rem 0.85rem; font-size: 0.8125rem">Đang tải chuyên mục…</span>
       </div>
     </nav>
 
@@ -63,10 +62,14 @@
         </div>
 
         <div class="card">
-          <div class="empty-hint">
+          <div id="post-list-empty" class="empty-hint d-none">
             <strong>Chưa có tin đăng nào</strong>
-            Các bài viết sau khi được duyệt sẽ hiển thị tại đây.
+            Thử đổi từ khóa hoặc chuyên mục — hoặc quay lại sau khi có bài đã duyệt.
           </div>
+          <div id="post-list">
+            <p class="card-muted" style="padding: 1rem 1.125rem; margin: 0">Đang tải danh sách…</p>
+          </div>
+          <div id="forum-pagination" class="forum-pagination d-none" aria-label="Phân trang"></div>
         </div>
       </main>
 
@@ -94,5 +97,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth-nav.js"></script>
+    <script src="js/posts-home.js"></script>
   </body>
 </html>
