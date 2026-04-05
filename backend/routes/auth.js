@@ -5,7 +5,12 @@ const bcrypt = require("bcrypt");
 const userController = require("../controllers/users");
 const roleModel = require("../models/roles");
 const { checkLogin, signToken } = require("../middleware/authHandler");
-const { registerValidation, validateResult } = require("../middleware/validationHandler");
+const {
+  registerValidation,
+  profilePatchValidation,
+  changePasswordValidation,
+  validateResult,
+} = require("../middleware/validationHandler");
 
 async function ensureRolePopulated(user) {
   if (!user) return user;
@@ -143,6 +148,48 @@ router.get("/me", checkLogin, async function (req, res) {
   user = await ensureRolePopulated(user);
   res.json(withRoleName(safeUser(user)));
 });
+
+// PATCH /api/auth/me — cập nhật hồ sơ (USER và ADMIN cùng endpoint; chỉ sửa chính mình)
+router.patch(
+  "/me",
+  checkLogin,
+  profilePatchValidation,
+  validateResult,
+  async function (req, res) {
+    try {
+      const { displayName, email } = req.body;
+      const result = await userController.updateProfile(req.userId, { displayName, email });
+      if (!result.ok) {
+        return res.status(result.status || 400).json({ message: result.message });
+      }
+      let user = await userController.findById(req.userId);
+      user = await ensureRolePopulated(user);
+      res.json({ message: "Đã cập nhật hồ sơ.", user: withRoleName(safeUser(user)) });
+    } catch (e) {
+      res.status(500).json({ message: String(e.message || e) });
+    }
+  }
+);
+
+// POST /api/auth/change-password
+router.post(
+  "/change-password",
+  checkLogin,
+  changePasswordValidation,
+  validateResult,
+  async function (req, res) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const result = await userController.changePassword(req.userId, currentPassword, newPassword);
+      if (!result.ok) {
+        return res.status(result.status || 400).json({ message: result.message });
+      }
+      res.json({ message: "Đã đổi mật khẩu thành công." });
+    } catch (e) {
+      res.status(500).json({ message: String(e.message || e) });
+    }
+  }
+);
 
 // POST /api/auth/logout — xóa cookie; không bắt buộc token hợp lệ
 router.post("/logout", function (req, res) {

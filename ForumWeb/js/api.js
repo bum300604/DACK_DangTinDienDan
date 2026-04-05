@@ -94,6 +94,20 @@
     me: function () {
       return apiFetch("/api/auth/me");
     },
+
+    updateProfile: function (payload) {
+      return apiFetch("/api/auth/me", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    },
+
+    changePassword: function (currentPassword, newPassword) {
+      return apiFetch("/api/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword: currentPassword, newPassword: newPassword }),
+      });
+    },
   };
 
   window.ForumApi = ForumApi;

@@ -21,6 +21,30 @@ module.exports = {
       .withMessage("Mật khẩu tối thiểu 8 ký tự."),
   ],
 
+  profilePatchValidation: [
+    body("displayName")
+      .trim()
+      .isLength({ max: 128 })
+      .withMessage("Tên hiển thị tối đa 128 ký tự."),
+    body("email")
+      .trim()
+      .notEmpty()
+      .withMessage("Email không được để trống.")
+      .isEmail()
+      .withMessage("Email không hợp lệ."),
+  ],
+
+  changePasswordValidation: [
+    body("currentPassword")
+      .notEmpty()
+      .withMessage("Vui lòng nhập mật khẩu hiện tại."),
+    body("newPassword")
+      .notEmpty()
+      .withMessage("Vui lòng nhập mật khẩu mới.")
+      .isLength({ min: 8 })
+      .withMessage("Mật khẩu mới tối thiểu 8 ký tự."),
+  ],
+
   validateResult: function (req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
