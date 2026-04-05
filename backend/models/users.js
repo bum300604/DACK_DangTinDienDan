@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
       ref: "role",
       required: true,
     },
-    /** Khóa đăng nhập (Task quản trị user — dùng sau) */
+    /** Khóa đăng nhập — admin bật; middleware chặn mọi API có checkLogin */
     isLocked: {
       type: Boolean,
       default: false,

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Chuyên mục — Quản trị</title>
+    <title>Thành viên — Quản trị</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -45,52 +45,55 @@
           <a href="my-posts.html">Bài viết của tôi</a>
           <a href="admin.html">Tổng quan</a>
           <a href="admin-posts.html">Kiểm duyệt</a>
-          <a href="admin-categories.html" class="is-current">Chuyên mục</a>
+          <a href="admin-categories.html">Chuyên mục</a>
           <a href="admin-reports.html">Báo cáo</a>
-          <a href="admin-users.html">Thành viên</a>
+          <a href="admin-users.html" class="is-current">Thành viên</a>
         </nav>
-        <div class="admin-panel" id="admin-cats-panel">
-          <h2>Chuyên mục</h2>
-          <p class="card-muted" id="admin-cats-lead">
-            Tạo và đổi tên chuyên mục; <strong>Ẩn</strong> để gỡ khỏi bộ lọc trang chủ (không xóa bài). Người dùng lọc bài ở
-            <a href="index.html">trang chủ</a> theo chuyên mục đang hiển thị.
+        <div class="admin-panel" id="admin-users-panel">
+          <h2>Thành viên</h2>
+          <p class="card-muted" id="admin-users-lead">
+            <strong>Khóa</strong> để chặn đăng nhập và mọi thao tác cần đăng nhập (token hiện tại cũng không còn hiệu lực). Người đã bị khóa sẽ thấy thông báo khi đăng nhập hoặc khi tải trang.
           </p>
 
-          <form id="admin-cats-form" class="admin-cats-add" style="margin: 1rem 0">
-            <div class="form-group" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end; margin-bottom: 0">
-              <div style="flex: 1; min-width: 12rem; max-width: 24rem">
-                <label for="admin-cat-name">Tên chuyên mục mới</label>
-                <input
-                  type="text"
-                  id="admin-cat-name"
-                  name="name"
-                  maxlength="120"
-                  placeholder="Ví dụ: Việc làm"
-                  autocomplete="off"
-                />
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm">Thêm</button>
-            </div>
+          <form id="admin-users-search" class="admin-posts-filters" style="margin: 1rem 0; align-items: center; flex-wrap: wrap; gap: 0.5rem">
+            <label for="admin-users-q" class="muted" style="margin: 0">Tìm</label>
+            <input
+              type="search"
+              id="admin-users-q"
+              name="q"
+              placeholder="Tên đăng nhập, email, tên hiển thị"
+              style="min-width: 14rem; flex: 1; max-width: 28rem"
+              autocomplete="off"
+            />
+            <button type="submit" class="btn btn-primary btn-sm">Tìm</button>
           </form>
 
-          <div id="admin-cats-alert" class="alert alert-danger d-none"></div>
+          <div id="admin-users-alert" class="alert alert-danger d-none"></div>
 
-          <div id="admin-cats-empty" class="card card-pad d-none">
-            <p class="card-muted" style="margin: 0">Chưa có chuyên mục nào.</p>
+          <p id="admin-users-pagination" class="card-muted d-none" style="margin: 0.5rem 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem">
+            <button type="button" class="btn btn-outline btn-sm" id="admin-users-prev">Trước</button>
+            <span id="admin-users-page-label"></span>
+            <button type="button" class="btn btn-outline btn-sm" id="admin-users-next">Sau</button>
+          </p>
+
+          <div id="admin-users-empty" class="card card-pad d-none">
+            <p class="card-muted" style="margin: 0">Không có tài khoản nào khớp.</p>
           </div>
 
           <div class="my-posts-table-wrap">
-            <table class="my-posts-table" id="admin-cats-table" hidden>
+            <table class="my-posts-table" id="admin-users-table" hidden>
               <thead>
                 <tr>
-                  <th>Tên</th>
-                  <th>Số bài</th>
+                  <th>Tên đăng nhập</th>
+                  <th>Email</th>
+                  <th>Tên hiển thị</th>
+                  <th>Vai trò</th>
                   <th>Trạng thái</th>
-                  <th>Cập nhật</th>
+                  <th>Đăng ký</th>
                   <th></th>
                 </tr>
               </thead>
-              <tbody id="admin-cats-tbody"></tbody>
+              <tbody id="admin-users-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -104,6 +107,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/admin-categories-page.js"></script>
+    <script src="js/admin-users-page.js"></script>
   </body>
 </html>
