@@ -158,6 +158,65 @@
         method: "DELETE",
       });
     },
+
+    /** Bài viết của tôi — cần đăng nhập */
+    listMyPosts: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch("/api/me/posts" + (qs ? "?" + qs : ""));
+    },
+
+    getMyPost: function (id) {
+      return apiFetch("/api/me/posts/" + encodeURIComponent(id));
+    },
+
+    createMyPost: function (payload) {
+      return apiFetch("/api/me/posts", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    },
+
+    updateMyPost: function (id, payload) {
+      return apiFetch("/api/me/posts/" + encodeURIComponent(id), {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    },
+
+    deleteMyPost: function (id) {
+      return apiFetch("/api/me/posts/" + encodeURIComponent(id), {
+        method: "DELETE",
+      });
+    },
+
+    /** Quản trị: danh sách bài theo trạng thái — ADMIN */
+    listAdminPosts: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.status) q.set("status", params.status);
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch("/api/admin/posts" + (qs ? "?" + qs : ""));
+    },
+
+    approveAdminPost: function (id) {
+      return apiFetch("/api/admin/posts/" + encodeURIComponent(id) + "/approve", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+    },
+
+    rejectAdminPost: function (id, reason) {
+      return apiFetch("/api/admin/posts/" + encodeURIComponent(id) + "/reject", {
+        method: "POST",
+        body: JSON.stringify({ reason: reason }),
+      });
+    },
   };
 
   window.ForumApi = ForumApi;

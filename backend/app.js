@@ -64,6 +64,10 @@ app.use(
   require("./routes/commentMutations")
 );
 
+app.use("/api/me/posts", require("./middleware/dbReady"), require("./routes/mePosts"));
+
+app.use("/api/admin/posts", require("./middleware/dbReady"), require("./routes/adminPosts"));
+
 app.use(express.static(path.join(__dirname, "..", "ForumWeb")));
 
 app.use(function (req, res, next) {
