@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Chi tiết bài viết — ĐăngTin Diễn đàn</title>
+    <title>Soạn bài — ĐăngTin Diễn đàn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,54 +37,48 @@
       </nav>
     </header>
 
-    <div class="post-read-wrap">
-      <a class="post-back" href="index.html" id="post-back-link">← Về danh sách tin</a>
+    <main class="my-post-edit-wrap">
+      <a class="post-back" href="my-posts.html">← Danh sách bài của tôi</a>
+      <h1 id="post-edit-heading">Đăng tin mới</h1>
+      <p id="post-edit-lead" class="auth-lead">
+        Sau khi gửi, bài sẽ ở trạng thái <strong>chờ duyệt</strong> cho đến khi quản trị viên duyệt.
+      </p>
 
-      <article class="post-article" id="post-article" hidden>
-        <h1 id="post-title"></h1>
-        <div class="post-meta" id="post-meta"></div>
-        <p class="post-content" id="post-content"></p>
-      </article>
-
-      <div id="post-error" class="card card-pad d-none">
-        <p class="alert alert-danger" id="post-error-msg" style="margin: 0"></p>
+      <div id="post-edit-alert" class="alert alert-danger d-none"></div>
+      <div id="post-edit-reject" class="card card-pad post-edit-reject d-none">
+        <p class="post-edit-reject__label">Lý do từ chối lần trước</p>
+        <p id="post-edit-reject-text" class="post-edit-reject__text"></p>
       </div>
 
-      <section class="comments-section" id="comments-section" hidden aria-labelledby="comments-heading">
-        <h2 id="comments-heading" class="comments-section__title">Bình luận</h2>
-
-        <div id="comments-login-hint" class="comments-login-hint d-none">
-          <a href="login.html">Đăng nhập</a> để tham gia bình luận.
+      <form id="post-edit-form" class="post-edit-form">
+        <div class="form-group">
+          <label for="post-title">Tiêu đề</label>
+          <input id="post-title" name="title" type="text" maxlength="200" required autocomplete="off" />
         </div>
-
-        <form id="comment-form" class="comment-form d-none">
-          <label class="sr-only" for="comment-input">Nội dung bình luận</label>
-          <textarea
-            id="comment-input"
-            class="comment-form__textarea"
-            rows="3"
-            maxlength="5000"
-            placeholder="Viết bình luận…"
-            required
-          ></textarea>
-          <div class="comment-form__actions">
-            <button type="submit" class="btn btn-primary btn-sm">Gửi bình luận</button>
-          </div>
-        </form>
-
-        <p id="comments-load-error" class="alert alert-danger d-none" role="alert"></p>
-        <ul id="comments-list" class="comments-list" aria-live="polite"></ul>
-      </section>
-    </div>
+        <div class="form-group">
+          <label for="post-category">Chuyên mục</label>
+          <select id="post-category" name="categoryId" required>
+            <option value="">— Chọn chuyên mục —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="post-content">Nội dung</label>
+          <textarea id="post-content" name="content" rows="14" maxlength="50000" required></textarea>
+        </div>
+        <div class="post-edit-actions">
+          <button type="submit" class="btn btn-primary" id="post-edit-submit">Gửi duyệt</button>
+          <a class="btn btn-outline" href="my-posts.html">Hủy</a>
+        </div>
+      </form>
+    </main>
 
     <footer class="forum-footer">
       <span>© ĐăngTin Diễn đàn</span>
-      <a href="#">Điều khoản</a>
-      <a href="#">Liên hệ</a>
+      <a href="index.html">Trang chủ</a>
     </footer>
 
     <script src="js/api.js"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/post-read.js"></script>
+    <script src="js/my-post-edit-page.js"></script>
   </body>
 </html>

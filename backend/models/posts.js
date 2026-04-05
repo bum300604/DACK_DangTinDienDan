@@ -26,6 +26,13 @@ const postSchema = new mongoose.Schema(
       default: "PENDING",
       index: true,
     },
+    /** Ghi chú khi từ chối (chỉ có nghĩa khi status = REJECTED). */
+    rejectionReason: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 2000,
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",

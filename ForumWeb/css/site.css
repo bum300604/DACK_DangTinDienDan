@@ -694,6 +694,188 @@ button.cat-pill--btn:hover:not(.is-active) {
   cursor: not-allowed;
 }
 
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 12rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #fdba74;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+}
+
+/* —— Bài viết của tôi / soạn bài —— */
+.my-posts-wrap,
+.my-post-edit-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.5rem;
+}
+
+.my-posts-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-posts-head h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.my-posts-table-wrap {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.my-posts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.my-posts-table th,
+.my-posts-table td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.my-posts-table th {
+  background: #fafafa;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.my-posts-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.my-posts-col-title {
+  min-width: 200px;
+  max-width: 360px;
+}
+
+.my-posts-title-cell {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.my-posts-reject-reason {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  color: #991b1b;
+  line-height: 1.4;
+}
+
+.post-status {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.post-status--pending {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.post-status--ok {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.post-status--reject {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.my-posts-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.post-edit-form {
+  margin-top: 1rem;
+  max-width: 720px;
+}
+
+.post-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.post-edit-reject {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.post-edit-reject__label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #991b1b;
+}
+
+.post-edit-reject__text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #7f1d1d;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.admin-posts-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.admin-filter-btn.is-active {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
 /* —— Profile page —— */
 .profile-wrap {
   max-width: 520px;

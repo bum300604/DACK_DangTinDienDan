@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Đăng nhập — ĐăngTin Diễn đàn</title>
+    <title>Bài viết của tôi — ĐăngTin Diễn đàn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,15 +21,15 @@
           <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
         </span>
       </a>
-      <nav class="nav-actions">
+      <nav class="nav-actions" aria-label="Tài khoản">
         <div id="nav-guest">
-          <a class="btn btn-outline" href="index.html">Trang chủ</a>
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
           <a class="btn btn-primary" href="register.html">Đăng ký</a>
         </div>
         <div id="nav-user" class="nav-user-row d-none">
           <span id="nav-user-label" class="muted"></span>
           <span id="nav-role-badge" class="badge badge-user"></span>
-          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="my-posts.html" aria-current="page">Bài viết của tôi</a>
           <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
           <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
           <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
@@ -37,29 +37,34 @@
       </nav>
     </header>
 
-    <main class="auth-wrap">
-      <div class="auth-card">
-        <h1>Đăng nhập</h1>
-        <p class="auth-lead">Nhập tên đăng nhập hoặc email cùng mật khẩu.</p>
-        <div id="login-alert" class="alert alert-danger d-none"></div>
-        <form id="login-form">
-          <div class="form-group">
-            <label for="login-username">Tên đăng nhập hoặc email</label>
-            <input id="login-username" name="username" autocomplete="username" required />
-          </div>
-          <div class="form-group">
-            <label for="login-password">Mật khẩu</label>
-            <input
-              id="login-password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              required
-            />
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%">Đăng nhập</button>
-        </form>
-        <p class="text-center muted mt-1">Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
+    <main class="my-posts-wrap">
+      <div class="my-posts-head">
+        <h1>Bài viết của tôi</h1>
+        <a class="btn btn-primary" href="my-post-edit.html">Đăng tin mới</a>
+      </div>
+      <p class="auth-lead">
+        Bài gửi mới ở trạng thái <strong>chờ duyệt</strong>. Nếu bị từ chối, bạn sẽ thấy lý do và có thể sửa rồi gửi lại.
+      </p>
+
+      <div id="my-posts-alert" class="alert alert-danger d-none"></div>
+
+      <div id="my-posts-empty" class="card card-pad d-none">
+        <p class="card-muted" style="margin: 0">Bạn chưa có bài nào. Hãy đăng tin mới.</p>
+      </div>
+
+      <div class="my-posts-table-wrap">
+        <table class="my-posts-table" id="my-posts-table" hidden>
+          <thead>
+            <tr>
+              <th>Tiêu đề</th>
+              <th>Chuyên mục</th>
+              <th>Trạng thái</th>
+              <th>Cập nhật</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="my-posts-tbody"></tbody>
+        </table>
       </div>
     </main>
 
@@ -70,6 +75,6 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth-nav.js"></script>
-    <script src="js/login-page.js"></script>
+    <script src="js/my-posts-page.js"></script>
   </body>
 </html>
