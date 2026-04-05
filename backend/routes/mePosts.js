@@ -4,6 +4,7 @@ const Post = require("../models/posts");
 const Category = require("../models/categories");
 const Comment = require("../models/comments");
 const { checkLogin } = require("../middleware/authHandler");
+const userController = require("../controllers/users");
 const { uploadIfMultipart } = require("../middleware/postFilesUpload");
 const {
   buildAttachmentsFromMulterFiles,
@@ -26,6 +27,11 @@ function formatCategory(catDoc) {
 
 function canAuthorEditOrDelete(status) {
   return status === "PENDING" || status === "REJECTED";
+}
+
+async function isAdminUser(userId) {
+  const u = await userController.findById(userId);
+  return !!(u && u.role && String(u.role.name).toUpperCase() === "ADMIN");
 }
 
 function validatePostBody(body) {
@@ -162,12 +168,13 @@ router.post("/", checkLogin, uploadIfMultipart, async function (req, res, next) 
 
     const newFiles = buildAttachmentsFromMulterFiles(req.files || []);
 
+    const admin = await isAdminUser(req.userId);
     const doc = await Post.create({
       title: v.title,
       content: v.content,
       category: v.categoryId,
       author: req.userId,
-      status: "PENDING",
+      status: admin ? "APPROVED" : "PENDING",
       rejectionReason: "",
       hiddenFromPublic: false,
       attachments: newFiles,
@@ -280,7 +287,8 @@ router.patch("/:id", checkLogin, uploadIfMultipart, async function (req, res, ne
     existing.title = v.title;
     existing.content = v.content;
     existing.category = v.categoryId;
-    existing.status = "PENDING";
+    const admin = await isAdminUser(req.userId);
+    existing.status = admin ? "APPROVED" : "PENDING";
     existing.rejectionReason = "";
     await existing.save();
 

@@ -41,7 +41,7 @@ function formatCategory(catDoc) {
 router.get("/", async function (req, res, next) {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 6));
     const q = String(req.query.q || "").trim();
     const categoryIdRaw = String(req.query.categoryId || "").trim();
 
