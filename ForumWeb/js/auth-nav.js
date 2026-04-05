@@ -27,6 +27,15 @@
       roleBadge.textContent = r === "ADMIN" ? "Admin" : "User";
       roleBadge.className = "badge " + (r === "ADMIN" ? "badge-admin" : "badge-user");
     }
+    var adminLinks = document.querySelectorAll(".nav-admin-link");
+    var isAdmin = false;
+    if (me) {
+      var rn = (me.roleName || (me.role && me.role.name) || "").toString().toUpperCase();
+      isAdmin = rn === "ADMIN";
+    }
+    for (var i = 0; i < adminLinks.length; i++) {
+      adminLinks[i].classList.toggle("d-none", !isAdmin);
+    }
   }
 
   function refresh() {
@@ -52,6 +61,13 @@
         });
     });
   }
+
+  function refreshAuthNav(me) {
+    if (me) showUser(me);
+    else refresh();
+  }
+
+  window.refreshAuthNav = refreshAuthNav;
 
   refresh();
 })();
