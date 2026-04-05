@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Post = require("../models/posts");
 const Category = require("../models/categories");
 const { publicApprovedFilter } = require("../utils/publicPostFilter");
+const { firstImageThumbUrl } = require("../utils/postAttachments");
 
 const router = express.Router();
 
@@ -78,6 +79,7 @@ router.get("/", async function (req, res, next) {
     ]);
 
     const posts = items.map(function (p) {
+      const at = p.attachments || [];
       return {
         _id: p._id,
         title: p.title,
@@ -85,6 +87,8 @@ router.get("/", async function (req, res, next) {
         category: formatCategory(p.category),
         createdAt: p.createdAt,
         author: formatAuthor(p.author),
+        thumbUrl: firstImageThumbUrl(at),
+        attachmentCount: at.length,
       };
     });
 
@@ -120,6 +124,7 @@ router.get("/:id", async function (req, res, next) {
       return res.status(404).json({ message: "Không tìm thấy bài viết hoặc bài chưa được duyệt." });
     }
 
+    const at = post.attachments || [];
     res.json({
       _id: post._id,
       title: post.title,
@@ -128,6 +133,8 @@ router.get("/:id", async function (req, res, next) {
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       author: formatAuthor(post.author),
+      attachments: at,
+      thumbUrl: firstImageThumbUrl(at),
     });
   } catch (err) {
     next(err);

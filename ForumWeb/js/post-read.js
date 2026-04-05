@@ -7,6 +7,7 @@
   var titleEl = document.getElementById("post-title");
   var metaEl = document.getElementById("post-meta");
   var contentEl = document.getElementById("post-content");
+  var attachmentsWrap = document.getElementById("post-attachments-wrap");
   var errWrap = document.getElementById("post-error");
   var errMsg = document.getElementById("post-error-msg");
   var backLink = document.getElementById("post-back-link");
@@ -34,6 +35,55 @@
 
   var reportTargetType = "POST";
   var reportCommentId = null;
+
+  function renderAttachments(attachments, wrap) {
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    if (!attachments || !attachments.length) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+    var title = document.createElement("h2");
+    title.className = "post-attachments-title";
+    title.textContent = "Ảnh & tệp đính kèm";
+    wrap.appendChild(title);
+    var grid = document.createElement("div");
+    grid.className = "post-attachments-grid";
+    for (var i = 0; i < attachments.length; i++) {
+      var a = attachments[i];
+      var isImg =
+        a.kind === "image" ||
+        (a.mimeType && String(a.mimeType).indexOf("image/") === 0);
+      if (isImg) {
+        var figure = document.createElement("figure");
+        figure.className = "post-att-figure";
+        var img = document.createElement("img");
+        img.className = "post-att-img";
+        img.src = a.url || "";
+        img.alt = (a.originalName && String(a.originalName)) || "";
+        figure.appendChild(img);
+        if (a.originalName) {
+          var cap = document.createElement("figcaption");
+          cap.className = "muted";
+          cap.textContent = a.originalName;
+          figure.appendChild(cap);
+        }
+        grid.appendChild(figure);
+      } else {
+        var row = document.createElement("div");
+        row.className = "post-att-file";
+        var link = document.createElement("a");
+        link.href = a.url || "#";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "📎 " + (a.originalName || "Tải tệp");
+        row.appendChild(link);
+        grid.appendChild(row);
+      }
+    }
+    wrap.appendChild(grid);
+  }
 
   function formatWhen(d) {
     if (!d) return "";
@@ -376,6 +426,8 @@
         addSpan(formatWhen(post.createdAt));
 
         contentEl.textContent = post.content || "";
+
+        renderAttachments(post.attachments, attachmentsWrap);
 
         articleEl.hidden = false;
         if (errWrap) errWrap.classList.add("d-none");

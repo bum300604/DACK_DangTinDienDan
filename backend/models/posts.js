@@ -44,6 +44,18 @@ const postSchema = new mongoose.Schema(
       default: false,
       index: true,
     },
+    /** Ảnh / tệp đính kèm (URL tĩnh dưới /uploads/post-attachments/). */
+    attachments: {
+      type: [
+        {
+          url: { type: String, required: true },
+          originalName: { type: String, default: "" },
+          mimeType: { type: String, default: "" },
+          kind: { type: String, enum: ["image", "file"], default: "file" },
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

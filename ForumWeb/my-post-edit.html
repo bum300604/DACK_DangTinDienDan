@@ -66,6 +66,17 @@
           <label for="post-content">Nội dung</label>
           <textarea id="post-content" name="content" rows="14" maxlength="50000" required></textarea>
         </div>
+        <div class="form-group">
+          <label for="post-files">Ảnh / tệp đính kèm (tối đa 10 tệp, mỗi tệp ≤ 5MB)</label>
+          <input
+            type="file"
+            id="post-files"
+            multiple
+            accept=".pdf,.zip,.txt,.doc,.docx,.xls,.xlsx,image/jpeg,image/png,image/gif,image/webp"
+          />
+          <p class="card-muted" style="margin: 0.35rem 0 0">Ảnh (JPEG, PNG, GIF, WebP) hoặc PDF, ZIP, TXT, Word, Excel.</p>
+          <div id="post-file-preview" class="post-file-preview is-empty" aria-live="polite"></div>
+        </div>
         <div class="post-edit-actions">
           <button type="submit" class="btn btn-primary" id="post-edit-submit">Gửi duyệt</button>
           <a class="btn btn-outline" href="my-posts.html">Hủy</a>

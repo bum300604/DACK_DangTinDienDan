@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const Post = require("../models/posts");
 const Comment = require("../models/comments");
 const { checkLogin, checkRole } = require("../middleware/authHandler");
+const { deleteFilesForUrls } = require("../utils/postAttachments");
 
 const router = express.Router();
 
@@ -289,6 +290,11 @@ router.delete("/:id", checkLogin, checkRole("ADMIN"), async function (req, res, 
     if (!post) {
       return res.status(404).json({ message: "Không tìm thấy bài viết." });
     }
+
+    const urls = (post.attachments || []).map(function (a) {
+      return a.url;
+    });
+    deleteFilesForUrls(urls);
 
     await Comment.deleteMany({ post: id });
     await Post.deleteOne({ _id: id });

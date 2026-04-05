@@ -174,16 +174,18 @@
     },
 
     createMyPost: function (payload) {
+      var isFd = typeof FormData !== "undefined" && payload instanceof FormData;
       return apiFetch("/api/me/posts", {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: isFd ? payload : JSON.stringify(payload),
       });
     },
 
     updateMyPost: function (id, payload) {
+      var isFd = typeof FormData !== "undefined" && payload instanceof FormData;
       return apiFetch("/api/me/posts/" + encodeURIComponent(id), {
         method: "PATCH",
-        body: JSON.stringify(payload),
+        body: isFd ? payload : JSON.stringify(payload),
       });
     },
 
