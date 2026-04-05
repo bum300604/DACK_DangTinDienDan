@@ -28,6 +28,15 @@ module.exports = {
 
       const result = jwt.verify(token, getJwtSecret());
       req.userId = result.id;
+
+      const user = await userController.findById(req.userId);
+      if (!user) {
+        return res.status(403).json({ message: "Tài khoản không tồn tại hoặc đã bị xóa." });
+      }
+      if (user.isLocked) {
+        return res.status(403).json({ message: "Tài khoản đã bị khóa." });
+      }
+
       return next();
     } catch (e) {
       return res.status(403).json({ message: "Bạn chưa đăng nhập hoặc phiên hết hạn." });

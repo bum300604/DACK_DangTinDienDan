@@ -47,7 +47,15 @@
       .then(function (me) {
         showUser(me);
       })
-      .catch(function () {
+      .catch(function (err) {
+        if (err && err.message && /bị khóa/i.test(String(err.message))) {
+          ForumApi.logout()
+            .catch(function () {})
+            .then(function () {
+              showGuest();
+            });
+          return;
+        }
         showGuest();
       });
   }

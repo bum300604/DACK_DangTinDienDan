@@ -315,6 +315,24 @@
         method: "DELETE",
       });
     },
+
+    /** Thành viên — ADMIN (khóa / mở đăng nhập) */
+    listAdminUsers: function (params) {
+      params = params || {};
+      var q = new URLSearchParams();
+      if (params.q) q.set("q", params.q);
+      if (params.page) q.set("page", String(params.page));
+      if (params.limit) q.set("limit", String(params.limit));
+      var qs = q.toString();
+      return apiFetch("/api/admin/users" + (qs ? "?" + qs : ""));
+    },
+
+    patchAdminUserLock: function (id, isLocked) {
+      return apiFetch("/api/admin/users/" + encodeURIComponent(id), {
+        method: "PATCH",
+        body: JSON.stringify({ isLocked: !!isLocked }),
+      });
+    },
   };
 
   window.ForumApi = ForumApi;
