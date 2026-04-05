@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Duyệt bài — Quản trị</title>
+    <title>Kiểm duyệt — Hàng đợi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -43,22 +43,41 @@
           <a href="profile.html">Hồ sơ cá nhân</a>
           <a href="my-posts.html">Bài viết của tôi</a>
           <a href="admin.html">Tổng quan</a>
-          <a href="admin-posts.html" class="is-current">Duyệt bài</a>
+          <a href="admin-posts.html" class="is-current">Kiểm duyệt</a>
           <a href="#" onclick="return false">Báo cáo</a>
           <a href="#" onclick="return false">Thành viên</a>
         </nav>
         <div class="admin-panel" id="admin-posts-panel">
-          <h2>Duyệt bài đăng</h2>
+          <h2>Kiểm duyệt — Hàng đợi</h2>
           <p class="card-muted" id="admin-posts-lead">
-            Duyệt hoặc từ chối bài đang chờ. Từ chối cần nhập lý do — tác giả sẽ thấy ở trang “Bài viết của tôi”.
+            Xử lý bài <strong>chờ duyệt</strong> từ thành viên. Từ chối bắt buộc có <strong>lý do</strong> — hiển thị ở trang « Bài viết của tôi » (Task 5).
           </p>
+
+          <div class="admin-queue-stats" id="admin-queue-stats" aria-live="polite">
+            <span class="admin-queue-stat"
+              ><strong id="stat-pending">—</strong> chờ duyệt</span
+            >
+            <span class="admin-queue-stat muted"
+              ><strong id="stat-approved">—</strong> đã đăng</span
+            >
+            <span class="admin-queue-stat muted"
+              ><strong id="stat-rejected">—</strong> từ chối</span
+            >
+          </div>
 
           <div class="admin-posts-filters" role="tablist" aria-label="Lọc theo trạng thái">
             <button type="button" class="btn btn-outline btn-sm admin-filter-btn is-active" data-status="PENDING">
-              Chờ duyệt
+              <span class="admin-filter-label">Chờ duyệt</span>
+              <span class="admin-filter-count" data-count-for="PENDING"></span>
             </button>
-            <button type="button" class="btn btn-outline btn-sm admin-filter-btn" data-status="APPROVED">Đã đăng</button>
-            <button type="button" class="btn btn-outline btn-sm admin-filter-btn" data-status="REJECTED">Từ chối</button>
+            <button type="button" class="btn btn-outline btn-sm admin-filter-btn" data-status="APPROVED">
+              <span class="admin-filter-label">Đã đăng</span>
+              <span class="admin-filter-count" data-count-for="APPROVED"></span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm admin-filter-btn" data-status="REJECTED">
+              <span class="admin-filter-label">Từ chối</span>
+              <span class="admin-filter-count" data-count-for="REJECTED"></span>
+            </button>
           </div>
 
           <div id="admin-posts-alert" class="alert alert-danger d-none"></div>
@@ -71,17 +90,44 @@
             <table class="my-posts-table admin-posts-table" id="admin-posts-table" hidden>
               <thead>
                 <tr>
-                  <th>Tiêu đề</th>
+                  <th>Tiêu đề / nội dung rút gọn</th>
                   <th>Tác giả</th>
                   <th>Chuyên mục</th>
                   <th>Trạng thái</th>
                   <th>Gửi lúc</th>
-                  <th></th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody id="admin-posts-tbody"></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="reject-modal"
+      class="modal-backdrop d-none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reject-modal-title"
+      hidden
+    >
+      <div class="modal-dialog card">
+        <h3 id="reject-modal-title" class="modal-dialog__title">Từ chối bài đăng</h3>
+        <p class="card-muted modal-dialog__hint">Tác giả sẽ đọc lý do sau đó sửa và gửi duyệt lại nếu cần.</p>
+        <div class="form-group">
+          <label for="reject-reason-input">Lý do từ chối <span class="text-danger">*</span></label>
+          <textarea
+            id="reject-reason-input"
+            rows="5"
+            maxlength="2000"
+            placeholder="Ví dụ: thiếu thông tin liên hệ, nội dung không phù hợp chuyên mục…"
+          ></textarea>
+        </div>
+        <div class="modal-dialog__actions">
+          <button type="button" class="btn btn-outline" id="reject-modal-cancel">Hủy</button>
+          <button type="button" class="btn btn-primary" id="reject-modal-submit">Xác nhận từ chối</button>
         </div>
       </div>
     </div>

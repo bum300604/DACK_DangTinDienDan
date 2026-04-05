@@ -204,6 +204,11 @@
       return apiFetch("/api/admin/posts" + (qs ? "?" + qs : ""));
     },
 
+    /** Số bài PENDING / APPROVED / REJECTED — ADMIN */
+    getAdminPostQueueStats: function () {
+      return apiFetch("/api/admin/posts/queue-stats");
+    },
+
     approveAdminPost: function (id) {
       return apiFetch("/api/admin/posts/" + encodeURIComponent(id) + "/approve", {
         method: "POST",

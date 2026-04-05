@@ -1,5 +1,5 @@
 /**
- * Admin: duyệt / từ chối bài chờ duyệt.
+ * Admin: kiểm duyệt hàng đợi — duyệt / từ chối có lý do (modal).
  */
 (function () {
   var lead = document.getElementById("admin-posts-lead");
@@ -9,7 +9,17 @@
   var tbody = document.getElementById("admin-posts-tbody");
   var filterWrap = document.querySelector(".admin-posts-filters");
 
+  var statPending = document.getElementById("stat-pending");
+  var statApproved = document.getElementById("stat-approved");
+  var statRejected = document.getElementById("stat-rejected");
+
+  var rejectModal = document.getElementById("reject-modal");
+  var rejectReasonInput = document.getElementById("reject-reason-input");
+  var rejectModalCancel = document.getElementById("reject-modal-cancel");
+  var rejectModalSubmit = document.getElementById("reject-modal-submit");
+
   var currentStatus = "PENDING";
+  var pendingRejectId = null;
 
   function showAlert(msg) {
     if (!alertEl) return;
@@ -51,8 +61,55 @@
     return (a.displayName && String(a.displayName).trim()) || a.username || "—";
   }
 
+  function openRejectModal(postId) {
+    pendingRejectId = postId;
+    if (rejectReasonInput) rejectReasonInput.value = "";
+    if (rejectModal) {
+      rejectModal.classList.remove("d-none");
+      rejectModal.removeAttribute("hidden");
+    }
+    if (rejectReasonInput) rejectReasonInput.focus();
+  }
+
+  function closeRejectModal() {
+    pendingRejectId = null;
+    if (rejectModal) {
+      rejectModal.classList.add("d-none");
+      rejectModal.setAttribute("hidden", "hidden");
+    }
+    if (rejectReasonInput) rejectReasonInput.value = "";
+  }
+
+  function refreshStats() {
+    if (!ForumApi.getAdminPostQueueStats) return Promise.resolve();
+    return ForumApi.getAdminPostQueueStats()
+      .then(function (s) {
+        if (statPending) statPending.textContent = s && s.pending != null ? String(s.pending) : "0";
+        if (statApproved) statApproved.textContent = s && s.approved != null ? String(s.approved) : "0";
+        if (statRejected) statRejected.textContent = s && s.rejected != null ? String(s.rejected) : "0";
+
+        var map = {
+          PENDING: s && s.pending,
+          APPROVED: s && s.approved,
+          REJECTED: s && s.rejected,
+        };
+        var badges = document.querySelectorAll(".admin-filter-count");
+        for (var i = 0; i < badges.length; i++) {
+          var el = badges[i];
+          var key = el.getAttribute("data-count-for");
+          if (!key || map[key] === undefined || map[key] === null) {
+            el.textContent = "";
+            continue;
+          }
+          el.textContent = "(" + map[key] + ")";
+        }
+      })
+      .catch(function () {});
+  }
+
   function renderRow(p) {
     var tr = document.createElement("tr");
+    tr.setAttribute("data-post-id", String(p._id));
 
     var tdTitle = document.createElement("td");
     tdTitle.className = "my-posts-col-title";
@@ -60,6 +117,14 @@
     titleText.className = "my-posts-title-cell";
     titleText.textContent = p.title || "";
     tdTitle.appendChild(titleText);
+
+    if (p.excerpt) {
+      var ex = document.createElement("p");
+      ex.className = "admin-post-excerpt muted";
+      ex.textContent = p.excerpt;
+      tdTitle.appendChild(ex);
+    }
+
     if (p.status === "REJECTED" && p.rejectionReason) {
       var reason = document.createElement("p");
       reason.className = "my-posts-reject-reason";
@@ -90,7 +155,7 @@
       var aView = document.createElement("a");
       aView.className = "btn btn-outline btn-sm";
       aView.href = "post.html?id=" + encodeURIComponent(p._id);
-      aView.textContent = "Xem";
+      aView.textContent = "Xem bài";
       aView.target = "_blank";
       aView.rel = "noopener";
       tdAct.appendChild(aView);
@@ -141,7 +206,7 @@
         if (!posts.length) {
           if (emptyEl) emptyEl.classList.remove("d-none");
           if (tableEl) tableEl.hidden = true;
-          return;
+          return refreshStats();
         }
         if (emptyEl) emptyEl.classList.add("d-none");
         if (tableEl) tableEl.hidden = false;
@@ -149,6 +214,7 @@
         for (var i = 0; i < posts.length; i++) {
           tbody.appendChild(renderRow(posts[i]));
         }
+        return refreshStats();
       })
       .catch(function (err) {
         showAlert(err.message || "Không tải được danh sách.");
@@ -158,6 +224,41 @@
   if (!window.ForumApi || !ForumApi.getToken()) {
     window.location.href = "login.html";
     return;
+  }
+
+  if (rejectModalCancel) {
+    rejectModalCancel.addEventListener("click", closeRejectModal);
+  }
+  if (rejectModal) {
+    rejectModal.addEventListener("click", function (e) {
+      if (e.target === rejectModal) closeRejectModal();
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (!rejectModal || rejectModal.classList.contains("d-none")) return;
+    closeRejectModal();
+  });
+
+  if (rejectModalSubmit) {
+    rejectModalSubmit.addEventListener("click", function () {
+      var reason = (rejectReasonInput && rejectReasonInput.value) || "";
+      reason = String(reason).trim();
+      if (!reason) {
+        alert("Vui lòng nhập lý do từ chối.");
+        return;
+      }
+      if (!pendingRejectId) return;
+      var id = pendingRejectId;
+      ForumApi.rejectAdminPost(id, reason)
+        .then(function () {
+          closeRejectModal();
+          return loadList();
+        })
+        .catch(function (err) {
+          alert(err.message || "Thao tác thất bại.");
+        });
+    });
   }
 
   ForumApi.me()
@@ -173,7 +274,9 @@
         }, 900);
         return;
       }
-      return loadList();
+      return refreshStats().then(function () {
+        return loadList();
+      });
     })
     .catch(function () {
       window.location.href = "login.html";
@@ -182,7 +285,10 @@
   if (filterWrap) {
     filterWrap.addEventListener("click", function (e) {
       var t = e.target;
-      if (!t || !t.getAttribute || t.tagName !== "BUTTON") return;
+      while (t && t !== filterWrap && t.tagName !== "BUTTON") {
+        t = t.parentNode;
+      }
+      if (!t || t.tagName !== "BUTTON") return;
       var st = t.getAttribute("data-status");
       if (!st) return;
       currentStatus = st;
@@ -199,7 +305,7 @@
       if (!id) return;
 
       if (t.classList.contains("admin-approve-btn")) {
-        if (!window.confirm("Duyệt và đăng bài này?")) return;
+        if (!window.confirm("Duyệt và đăng bài này công khai?")) return;
         ForumApi.approveAdminPost(id)
           .then(function () {
             return loadList();
@@ -211,20 +317,7 @@
       }
 
       if (t.classList.contains("admin-reject-btn")) {
-        var reason = window.prompt("Lý do từ chối (bắt buộc):", "");
-        if (reason === null) return;
-        reason = String(reason).trim();
-        if (!reason) {
-          alert("Vui lòng nhập lý do từ chối.");
-          return;
-        }
-        ForumApi.rejectAdminPost(id, reason)
-          .then(function () {
-            return loadList();
-          })
-          .catch(function (err) {
-            alert(err.message || "Thao tác thất bại.");
-          });
+        openRejectModal(id);
       }
     });
   }

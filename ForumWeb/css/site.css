@@ -876,6 +876,85 @@ button.cat-pill--btn:hover:not(.is-active) {
   color: var(--primary);
 }
 
+.admin-filter-count {
+  font-weight: 700;
+  margin-left: 0.2rem;
+}
+
+.admin-queue-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--primary-soft);
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+}
+
+.admin-queue-stat strong {
+  color: var(--primary);
+  font-size: 1.05rem;
+}
+
+.admin-post-excerpt {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.admin-queue-line {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.text-danger {
+  color: #b91c1c;
+}
+
+/* Modal từ chối */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(17, 24, 39, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.25rem 1.35rem;
+  margin: 0;
+  box-shadow: var(--shadow-md);
+}
+
+.modal-dialog__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.modal-dialog__hint {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+}
+
+.modal-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
 /* —— Profile page —— */
 .profile-wrap {
   max-width: 520px;

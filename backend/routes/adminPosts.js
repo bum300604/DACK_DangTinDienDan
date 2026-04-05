@@ -28,6 +28,27 @@ function excerptFrom(content, maxLen) {
 }
 
 /**
+ * GET /api/admin/posts/queue-stats
+ * Số lượng bài theo trạng thái (badge hàng đợi).
+ */
+router.get("/queue-stats", checkLogin, checkRole("ADMIN"), async function (req, res, next) {
+  try {
+    const [pending, approved, rejected] = await Promise.all([
+      Post.countDocuments({ status: "PENDING" }),
+      Post.countDocuments({ status: "APPROVED" }),
+      Post.countDocuments({ status: "REJECTED" }),
+    ]);
+    res.json({
+      pending: pending,
+      approved: approved,
+      rejected: rejected,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * GET /api/admin/posts
  * Query: status (PENDING | APPROVED | REJECTED), page, limit
  */

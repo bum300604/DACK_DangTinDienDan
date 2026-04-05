@@ -30,9 +30,21 @@
         return;
       }
       var name = me.displayName || me.username || "Quản trị viên";
-      setMsg(
-        "Chào " + name + ". Khu vực duyệt bài, báo cáo và quản lý thành viên sẽ được tích hợp tại đây."
-      );
+      setMsg("Chào " + name + ". Dùng trang Kiểm duyệt để xử lý hàng đợi bài đăng (duyệt / từ chối kèm lý do).");
+
+      var queueLine = document.getElementById("admin-queue-line");
+      if (queueLine && ForumApi.getAdminPostQueueStats) {
+        ForumApi.getAdminPostQueueStats()
+          .then(function (s) {
+            var p = s && typeof s.pending === "number" ? s.pending : 0;
+            queueLine.textContent =
+              "Hàng đợi hiện tại: " + p + " bài chờ duyệt. Thành viên sẽ thấy trạng thái cập nhật tại « Bài viết của tôi ».";
+            queueLine.classList.remove("d-none");
+          })
+          .catch(function () {
+            queueLine.classList.add("d-none");
+          });
+      }
     })
     .catch(function () {
       setMsg("Phiên đăng nhập không hợp lệ.");
