@@ -355,7 +355,148 @@ button.cat-pill--btn:hover:not(.is-active) {
   border-radius: 8px;
   background: linear-gradient(145deg, #e5e7eb, #f3f4f6);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.post-thumb__img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+/* —— Đính kèm bài viết —— */
+.post-file-preview {
+  margin-top: 0.5rem;
+  min-height: 0;
+}
+
+.post-file-preview.is-empty {
+  min-height: 0;
+}
+
+.post-file-preview__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.post-file-preview__card {
+  position: relative;
+  width: 96px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface, #fff);
+  overflow: hidden;
+}
+
+.post-file-preview__thumb {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+  background: #f3f4f6;
+}
+
+.post-file-preview__doc {
+  width: 96px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  background: linear-gradient(145deg, #e5e7eb, #f3f4f6);
+}
+
+.post-file-preview__name {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.35rem;
+  line-height: 1.25;
+  word-break: break-word;
+  max-height: 2.75em;
+  overflow: hidden;
+  color: var(--text-muted);
+}
+
+.post-file-preview__remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.post-file-preview__remove:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.post-attachments-wrap {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.post-attachments-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.post-attachments-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.post-att-figure {
+  margin: 0;
+  max-width: 100%;
+}
+
+.post-att-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.post-att-file {
+  font-size: 0.9375rem;
+}
+
+.post-att-file a {
+  color: var(--primary);
+}
+
+.my-posts-col-thumb {
+  width: 52px;
+  vertical-align: middle;
+}
+
+.my-posts-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+  border: 1px solid var(--border);
+}
+
+.my-posts-thumb-placeholder {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: linear-gradient(145deg, #e5e7eb, #f3f4f6);
 }
 
 .post-body {

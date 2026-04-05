@@ -45,6 +45,18 @@
   function renderRow(p) {
     var tr = document.createElement("tr");
 
+    var tdThumb = document.createElement("td");
+    tdThumb.className = "my-posts-col-thumb";
+    if (p.thumbUrl) {
+      var im = document.createElement("img");
+      im.className = "my-posts-thumb";
+      im.src = p.thumbUrl;
+      im.alt = "";
+      tdThumb.appendChild(im);
+    } else {
+      tdThumb.innerHTML = '<span class="my-posts-thumb-placeholder" aria-hidden="true"></span>';
+    }
+
     var tdTitle = document.createElement("td");
     tdTitle.className = "my-posts-col-title";
     var titleText = document.createElement("div");
@@ -108,6 +120,7 @@
       tdAct.appendChild(btnDel);
     }
 
+    tr.appendChild(tdThumb);
     tr.appendChild(tdTitle);
     tr.appendChild(tdCat);
     tr.appendChild(tdSt);

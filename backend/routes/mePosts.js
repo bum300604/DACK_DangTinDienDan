@@ -1,10 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const { body, validationResult } = require("express-validator");
 const Post = require("../models/posts");
 const Category = require("../models/categories");
 const Comment = require("../models/comments");
 const { checkLogin } = require("../middleware/authHandler");
+const { uploadIfMultipart } = require("../middleware/postFilesUpload");
+const {
+  buildAttachmentsFromMulterFiles,
+  deleteFilesForUrls,
+  firstImageThumbUrl,
+} = require("../utils/postAttachments");
 
 const router = express.Router();
 
@@ -23,28 +28,68 @@ function canAuthorEditOrDelete(status) {
   return status === "PENDING" || status === "REJECTED";
 }
 
-const writeValidation = [
-  body("title")
-    .trim()
-    .notEmpty()
-    .withMessage("Tiêu đề không được để trống.")
-    .isLength({ max: 200 })
-    .withMessage("Tiêu đề tối đa 200 ký tự."),
-  body("content")
-    .trim()
-    .notEmpty()
-    .withMessage("Nội dung không được để trống.")
-    .isLength({ max: 50000 })
-    .withMessage("Nội dung tối đa 50000 ký tự."),
-  body("categoryId")
-    .trim()
-    .notEmpty()
-    .withMessage("Chọn chuyên mục.")
-    .custom(function (v) {
-      return mongoose.isValidObjectId(v);
-    })
-    .withMessage("Chuyên mục không hợp lệ."),
-];
+function validatePostBody(body) {
+  const title = body.title != null ? String(body.title).trim() : "";
+  const content = body.content != null ? String(body.content).trim() : "";
+  const categoryId = body.categoryId != null ? String(body.categoryId).trim() : "";
+  if (!title) {
+    return { ok: false, message: "Tiêu đề không được để trống." };
+  }
+  if (title.length > 200) {
+    return { ok: false, message: "Tiêu đề tối đa 200 ký tự." };
+  }
+  if (!content) {
+    return { ok: false, message: "Nội dung không được để trống." };
+  }
+  if (content.length > 50000) {
+    return { ok: false, message: "Nội dung tối đa 50000 ký tự." };
+  }
+  if (!categoryId) {
+    return { ok: false, message: "Chọn chuyên mục." };
+  }
+  if (!mongoose.isValidObjectId(categoryId)) {
+    return { ok: false, message: "Chuyên mục không hợp lệ." };
+  }
+  return { ok: true, title: title, content: content, categoryId: categoryId };
+}
+
+/** @returns {"OMIT"|"INVALID"|string[]} */
+function parseKeepUrlsField(body) {
+  if (body.keepUrls === undefined || body.keepUrls === "") {
+    return "OMIT";
+  }
+  const raw = body.keepUrls;
+  if (Array.isArray(raw)) {
+    return raw.map(String);
+  }
+  try {
+    const j = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (!Array.isArray(j)) return "INVALID";
+    return j.map(String);
+  } catch (e) {
+    return "INVALID";
+  }
+}
+
+function formatPostResponse(populated) {
+  const at = populated.attachments || [];
+  return {
+    _id: populated._id,
+    title: populated.title,
+    content: populated.content,
+    status: populated.status,
+    rejectionReason: populated.rejectionReason || "",
+    hiddenFromPublic: !!populated.hiddenFromPublic,
+    category: formatCategory(populated.category),
+    categoryId: populated.category ? populated.category._id : null,
+    attachments: at,
+    thumbUrl: firstImageThumbUrl(at),
+    createdAt: populated.createdAt,
+    updatedAt: populated.updatedAt,
+    canEdit: canAuthorEditOrDelete(populated.status),
+    canDelete: canAuthorEditOrDelete(populated.status),
+  };
+}
 
 /**
  * GET /api/me/posts
@@ -69,6 +114,7 @@ router.get("/", checkLogin, async function (req, res, next) {
     ]);
 
     const posts = items.map(function (p) {
+      const at = p.attachments || [];
       return {
         _id: p._id,
         title: p.title,
@@ -77,6 +123,8 @@ router.get("/", checkLogin, async function (req, res, next) {
         rejectionReason: p.rejectionReason || "",
         hiddenFromPublic: !!p.hiddenFromPublic,
         category: formatCategory(p.category),
+        thumbUrl: firstImageThumbUrl(at),
+        attachmentCount: at.length,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
         canEdit: canAuthorEditOrDelete(p.status),
@@ -98,47 +146,38 @@ router.get("/", checkLogin, async function (req, res, next) {
 
 /**
  * POST /api/me/posts
- * Gửi bài mới — trạng thái chờ duyệt.
+ * JSON hoặc multipart (fields: title, content, categoryId; files[] tùy chọn).
  */
-router.post("/", checkLogin, writeValidation, async function (req, res, next) {
+router.post("/", checkLogin, uploadIfMultipart, async function (req, res, next) {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg });
+    const v = validatePostBody(req.body);
+    if (!v.ok) {
+      return res.status(400).json({ message: v.message });
     }
 
-    const categoryId = String(req.body.categoryId).trim();
-    const catOk = await Category.exists({ _id: categoryId, isDeleted: false });
+    const catOk = await Category.exists({ _id: v.categoryId, isDeleted: false });
     if (!catOk) {
       return res.status(400).json({ message: "Chuyên mục không tồn tại." });
     }
 
+    const newFiles = buildAttachmentsFromMulterFiles(req.files || []);
+
     const doc = await Post.create({
-      title: String(req.body.title).trim(),
-      content: String(req.body.content).trim(),
-      category: categoryId,
+      title: v.title,
+      content: v.content,
+      category: v.categoryId,
       author: req.userId,
       status: "PENDING",
       rejectionReason: "",
       hiddenFromPublic: false,
+      attachments: newFiles,
     });
 
     const populated = await Post.findById(doc._id)
       .populate({ path: "category", select: "name" })
       .lean();
 
-    res.status(201).json({
-      _id: populated._id,
-      title: populated.title,
-      content: populated.content,
-      status: populated.status,
-      rejectionReason: "",
-      category: formatCategory(populated.category),
-      createdAt: populated.createdAt,
-      updatedAt: populated.updatedAt,
-      canEdit: true,
-      canDelete: true,
-    });
+    res.status(201).json(formatPostResponse(populated));
   } catch (err) {
     next(err);
   }
@@ -163,20 +202,7 @@ router.get("/:id", checkLogin, async function (req, res, next) {
       return res.status(404).json({ message: "Không tìm thấy bài viết." });
     }
 
-    res.json({
-      _id: post._id,
-      title: post.title,
-      content: post.content,
-      status: post.status,
-      rejectionReason: post.rejectionReason || "",
-      hiddenFromPublic: !!post.hiddenFromPublic,
-      category: formatCategory(post.category),
-      categoryId: post.category ? post.category._id : null,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      canEdit: canAuthorEditOrDelete(post.status),
-      canDelete: canAuthorEditOrDelete(post.status),
-    });
+    res.json(formatPostResponse(post));
   } catch (err) {
     next(err);
   }
@@ -184,13 +210,13 @@ router.get("/:id", checkLogin, async function (req, res, next) {
 
 /**
  * PATCH /api/me/posts/:id
- * Sửa bài ở trạng thái chờ duyệt hoặc bị từ chối (gửi lại duyệt).
+ * JSON hoặc multipart; keepUrls = mảng URL giữ lại (bắt buộc khi gửi multipart để tránh mất tệp cũ).
  */
-router.patch("/:id", checkLogin, writeValidation, async function (req, res, next) {
+router.patch("/:id", checkLogin, uploadIfMultipart, async function (req, res, next) {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg });
+    const v = validatePostBody(req.body);
+    if (!v.ok) {
+      return res.status(400).json({ message: v.message });
     }
 
     const id = req.params.id;
@@ -209,15 +235,51 @@ router.patch("/:id", checkLogin, writeValidation, async function (req, res, next
       });
     }
 
-    const categoryId = String(req.body.categoryId).trim();
-    const catOk = await Category.exists({ _id: categoryId, isDeleted: false });
+    const catOk = await Category.exists({ _id: v.categoryId, isDeleted: false });
     if (!catOk) {
       return res.status(400).json({ message: "Chuyên mục không tồn tại." });
     }
 
-    existing.title = String(req.body.title).trim();
-    existing.content = String(req.body.content).trim();
-    existing.category = categoryId;
+    const oldAttachments = existing.attachments || [];
+    const oldUrls = oldAttachments.map(function (a) {
+      return a.url;
+    });
+
+    const parsed = parseKeepUrlsField(req.body);
+    let keepUrls;
+    if (parsed === "INVALID") {
+      return res.status(400).json({ message: "keepUrls không hợp lệ (cần mảng URL)." });
+    }
+    if (parsed === "OMIT") {
+      keepUrls = oldUrls.slice();
+    } else {
+      keepUrls = parsed;
+    }
+
+    for (let i = 0; i < keepUrls.length; i++) {
+      if (oldUrls.indexOf(keepUrls[i]) === -1) {
+        return res.status(400).json({ message: "Danh sách giữ tệp không khớp bài hiện tại." });
+      }
+    }
+
+    const removed = oldUrls.filter(function (u) {
+      return keepUrls.indexOf(u) === -1;
+    });
+    deleteFilesForUrls(removed);
+
+    const keptOrdered = keepUrls
+      .map(function (url) {
+        return oldAttachments.find(function (a) {
+          return a.url === url;
+        });
+      })
+      .filter(Boolean);
+
+    const newFromUpload = buildAttachmentsFromMulterFiles(req.files || []);
+    existing.attachments = keptOrdered.concat(newFromUpload);
+    existing.title = v.title;
+    existing.content = v.content;
+    existing.category = v.categoryId;
     existing.status = "PENDING";
     existing.rejectionReason = "";
     await existing.save();
@@ -226,19 +288,7 @@ router.patch("/:id", checkLogin, writeValidation, async function (req, res, next
       .populate({ path: "category", select: "name" })
       .lean();
 
-    res.json({
-      _id: populated._id,
-      title: populated.title,
-      content: populated.content,
-      status: populated.status,
-      rejectionReason: populated.rejectionReason || "",
-      category: formatCategory(populated.category),
-      categoryId: populated.category ? populated.category._id : null,
-      createdAt: populated.createdAt,
-      updatedAt: populated.updatedAt,
-      canEdit: true,
-      canDelete: true,
-    });
+    res.json(formatPostResponse(populated));
   } catch (err) {
     next(err);
   }
@@ -265,6 +315,11 @@ router.delete("/:id", checkLogin, async function (req, res, next) {
         message: "Chỉ xóa được bài đang chờ duyệt hoặc bị từ chối.",
       });
     }
+
+    const urls = (existing.attachments || []).map(function (a) {
+      return a.url;
+    });
+    deleteFilesForUrls(urls);
 
     await Comment.deleteMany({ post: id });
     await Post.deleteOne({ _id: id });

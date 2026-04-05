@@ -168,6 +168,13 @@
       var thumb = document.createElement("div");
       thumb.className = "post-thumb";
       thumb.setAttribute("aria-hidden", "true");
+      if (p.thumbUrl) {
+        var img = document.createElement("img");
+        img.className = "post-thumb__img";
+        img.src = p.thumbUrl;
+        img.alt = "";
+        thumb.appendChild(img);
+      }
 
       var body = document.createElement("div");
       body.className = "post-body";
