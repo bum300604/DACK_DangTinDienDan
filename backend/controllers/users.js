@@ -80,4 +80,13 @@ module.exports = {
     await user.save();
     return { ok: true };
   },
+
+  /** Đặt mật khẩu mới (không cần mật khẩu cũ — dùng sau xác minh OTP). */
+  setPassword: async function (userId, newPassword) {
+    const user = await userModel.findOne({ _id: userId, isDeleted: false });
+    if (!user) return { ok: false, status: 404, message: "Không tìm thấy người dùng." };
+    user.password = String(newPassword);
+    await user.save();
+    return { ok: true };
+  },
 };
