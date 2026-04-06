@@ -33,7 +33,10 @@ mongoose.connection.on("error", function (err) {
 });
 
 mongoose.connection.on("disconnected", function () {
-  console.warn("MongoDB disconnected");
+  console.warn("MongoDB disconnected — đang thử kết nối lại…");
+  mongoose.connect(mongoUri, mongoConnectOptions).catch(function (err) {
+    console.warn("MongoDB reconnect:", err.message || err);
+  });
 });
 
 mongoose

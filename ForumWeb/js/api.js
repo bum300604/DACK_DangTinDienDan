@@ -109,6 +109,22 @@
       });
     },
 
+    /** Quên mật khẩu — gửi OTP qua email (mỗi lần gọi tạo mã mới). */
+    forgotPassword: function (email) {
+      return apiFetch("/api/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email: email }),
+      });
+    },
+
+    /** Đặt lại mật khẩu bằng OTP. */
+    resetPasswordWithOtp: function (email, otp, newPassword) {
+      return apiFetch("/api/auth/reset-password-otp", {
+        method: "POST",
+        body: JSON.stringify({ email: email, otp: otp, newPassword: newPassword }),
+      });
+    },
+
     /** Danh sách chuyên mục (id dùng làm categoryId khi lọc). */
     listPublicCategories: function () {
       return apiFetch("/api/public/categories");

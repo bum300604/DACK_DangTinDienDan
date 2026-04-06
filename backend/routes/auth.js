@@ -9,8 +9,11 @@ const {
   registerValidation,
   profilePatchValidation,
   changePasswordValidation,
+  forgotPasswordValidation,
+  resetPasswordWithOtpValidation,
   validateResult,
 } = require("../middleware/validationHandler");
+const { requestPasswordReset, confirmPasswordResetWithOtp } = require("../services/passwordReset");
 
 async function ensureRolePopulated(user) {
   if (!user) return user;
@@ -196,5 +199,42 @@ router.post("/logout", function (req, res) {
   res.cookie("token", "", { httpOnly: true, maxAge: 0, sameSite: "lax" });
   res.json({ ok: true });
 });
+
+// POST /api/auth/forgot-password — gửi OTP mới qua email (mỗi lần gọi tạo mã mới)
+router.post(
+  "/forgot-password",
+  forgotPasswordValidation,
+  validateResult,
+  async function (req, res) {
+    try {
+      const out = await requestPasswordReset(req.body.email);
+      if (!out.ok) {
+        return res.status(out.status || 500).json({ message: out.message });
+      }
+      res.json({ message: out.message });
+    } catch (e) {
+      res.status(500).json({ message: String(e.message || e) });
+    }
+  }
+);
+
+// POST /api/auth/reset-password-otp — xác minh OTP và đặt mật khẩu mới
+router.post(
+  "/reset-password-otp",
+  resetPasswordWithOtpValidation,
+  validateResult,
+  async function (req, res) {
+    try {
+      const { email, otp, newPassword } = req.body;
+      const out = await confirmPasswordResetWithOtp(email, otp, newPassword);
+      if (!out.ok) {
+        return res.status(out.status || 400).json({ message: out.message });
+      }
+      res.json({ message: out.message });
+    } catch (e) {
+      res.status(500).json({ message: String(e.message || e) });
+    }
+  }
+);
 
 module.exports = router;
