@@ -4,19 +4,29 @@ function getAppName() {
   return String(process.env.APP_NAME || "DienDanWeb").trim() || "DienDanWeb";
 }
 
+function isConsoleOtpDevMode() {
+  const v = process.env.SMTP_CONSOLE_OTP;
+  return String(v || "").toLowerCase() === "true" || v === "1";
+}
+
 function createTransport() {
-  const host = process.env.SMTP_HOST;
+  const host = String(process.env.SMTP_HOST || "").trim();
   if (!host) return null;
   const port = Number(process.env.SMTP_PORT || 587);
   const secure = String(process.env.SMTP_SECURE || "").toLowerCase() === "true";
+  const hasAuth = process.env.SMTP_USER && process.env.SMTP_PASS;
   return nodemailer.createTransport({
     host,
     port,
     secure,
-    auth:
-      process.env.SMTP_USER && process.env.SMTP_PASS
-        ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-        : undefined,
+    auth: hasAuth
+      ? {
+          user: String(process.env.SMTP_USER).trim(),
+          pass: String(process.env.SMTP_PASS).trim(),
+        }
+      : undefined,
+    /** Cổng 587 (STARTTLS) — tránh lỗi kết nối với một số máy chủ SMTP. */
+    requireTLS: !secure && port === 587,
   });
 }
 
@@ -42,13 +52,20 @@ async function sendPasswordResetOtp(toEmail, plainOtp) {
 
   const transporter = createTransport();
   if (!transporter) {
-    console.warn(
-      "[" + appName + "] SMTP_HOST chưa cấu hình — OTP gửi tới",
-      toEmail,
-      ":",
-      plainOtp
-    );
-    return { ok: true, skipped: true };
+    if (isConsoleOtpDevMode()) {
+      console.warn(
+        "[" + appName + "] SMTP_CONSOLE_OTP — không gửi email, OTP cho",
+        toEmail,
+        ":",
+        plainOtp
+      );
+      return { ok: true, skipped: true };
+    }
+    return {
+      ok: false,
+      error:
+        "Chưa cấu hình gửi email (SMTP_HOST trong .env). Thêm SMTP_HOST, SMTP_USER, SMTP_PASS (Gmail cần mật khẩu ứng dụng).",
+    };
   }
 
   try {
