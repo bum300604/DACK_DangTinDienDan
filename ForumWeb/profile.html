@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hồ sơ — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline nav-profile-link" href="profile.html" aria-current="page">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="profile-wrap">
+      <div class="profile-card">
+        <h1>Hồ sơ tài khoản</h1>
+        <p class="auth-lead">Cập nhật tên hiển thị, email và mật khẩu. Tên đăng nhập không đổi.</p>
+        <p class="auth-lead"><a href="my-posts.html">Quản lý bài viết của tôi</a> — soạn tin, xem trạng thái duyệt.</p>
+        <p class="auth-lead"><a href="my-reports.html">Báo cáo đã gửi</a> — theo dõi xử lý vi phạm.</p>
+
+        <div id="profile-alert" class="alert alert-danger d-none"></div>
+        <div id="profile-success" class="alert alert-success d-none"></div>
+
+        <section class="profile-section" aria-labelledby="profile-form-title">
+          <h2 id="profile-form-title" class="profile-section-title">Thông tin công khai</h2>
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="profile-username">Tên đăng nhập</label>
+              <input id="profile-username" name="username" type="text" readonly autocomplete="username" />
+            </div>
+            <div class="form-group">
+              <label for="profile-display">Tên hiển thị</label>
+              <input
+                id="profile-display"
+                name="displayName"
+                type="text"
+                maxlength="128"
+                autocomplete="nickname"
+                placeholder="Tên hiển thị trên diễn đàn"
+              />
+            </div>
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input id="profile-email" name="email" type="email" required autocomplete="email" />
+            </div>
+            <button type="submit" class="btn btn-primary" id="profile-save">Lưu hồ sơ</button>
+          </form>
+        </section>
+
+        <section class="profile-section" aria-labelledby="password-form-title">
+          <h2 id="password-form-title" class="profile-section-title">Đổi mật khẩu</h2>
+          <form id="password-form">
+            <div class="form-group">
+              <label for="pwd-current">Mật khẩu hiện tại</label>
+              <input
+                id="pwd-current"
+                name="currentPassword"
+                type="password"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="pwd-new">Mật khẩu mới</label>
+              <input
+                id="pwd-new"
+                name="newPassword"
+                type="password"
+                required
+                minlength="8"
+                autocomplete="new-password"
+              />
+            </div>
+            <div class="form-group">
+              <label for="pwd-confirm">Nhập lại mật khẩu mới</label>
+              <input
+                id="pwd-confirm"
+                name="confirmPassword"
+                type="password"
+                required
+                minlength="8"
+                autocomplete="new-password"
+              />
+            </div>
+            <button type="submit" class="btn btn-outline" id="pwd-save">Đổi mật khẩu</button>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/profile-page.js"></script>
+  </body>
+</html>

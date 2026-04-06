@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soạn bài — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="my-post-edit-wrap">
+      <a class="post-back" href="my-posts.html">← Danh sách bài của tôi</a>
+      <h1 id="post-edit-heading">Đăng tin mới</h1>
+      <p id="post-edit-lead" class="auth-lead">
+        Sau khi gửi, bài sẽ ở trạng thái <strong>chờ duyệt</strong> cho đến khi quản trị viên duyệt.
+      </p>
+
+      <div id="post-edit-alert" class="alert alert-danger d-none"></div>
+      <div id="post-edit-reject" class="card card-pad post-edit-reject d-none">
+        <p class="post-edit-reject__label">Lý do từ chối lần trước</p>
+        <p id="post-edit-reject-text" class="post-edit-reject__text"></p>
+      </div>
+
+      <form id="post-edit-form" class="post-edit-form">
+        <div class="form-group">
+          <label for="post-title">Tiêu đề</label>
+          <input id="post-title" name="title" type="text" maxlength="200" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label for="post-category">Chuyên mục</label>
+          <select id="post-category" name="categoryId" required>
+            <option value="">— Chọn chuyên mục —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="post-content">Nội dung</label>
+          <textarea id="post-content" name="content" rows="14" maxlength="50000" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="post-files">Ảnh / tệp đính kèm (tối đa 10 tệp, mỗi tệp ≤ 5MB)</label>
+          <input
+            type="file"
+            id="post-files"
+            multiple
+            accept=".pdf,.zip,.txt,.doc,.docx,.xls,.xlsx,image/jpeg,image/png,image/gif,image/webp"
+          />
+          <p class="card-muted" style="margin: 0.35rem 0 0">Ảnh (JPEG, PNG, GIF, WebP) hoặc PDF, ZIP, TXT, Word, Excel.</p>
+          <div id="post-file-preview" class="post-file-preview is-empty" aria-live="polite"></div>
+        </div>
+        <div class="post-edit-actions">
+          <button type="submit" class="btn btn-primary" id="post-edit-submit">Gửi duyệt</button>
+          <a class="btn btn-outline" href="my-posts.html">Hủy</a>
+        </div>
+      </form>
+    </main>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/my-post-edit-page.js"></script>
+  </body>
+</html>

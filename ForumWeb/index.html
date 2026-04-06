@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trang chủ — Diễn đàn đăng tin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="forum-search-strip">
+      <div class="forum-search-inner">
+        <input
+          type="search"
+          name="q"
+          autocomplete="off"
+          placeholder="Tìm theo tiêu đề hoặc nội dung tin đăng…"
+        />
+        <button type="button" class="btn btn-primary">Tìm kiếm</button>
+      </div>
+    </div>
+
+    <nav class="forum-cats" aria-label="Chuyên mục">
+      <div class="forum-cats-inner" id="forum-cats-inner">
+        <span class="muted" style="padding: 0.35rem 0.85rem; font-size: 0.8125rem">Đang tải chuyên mục…</span>
+      </div>
+    </nav>
+
+    <div class="forum-layout">
+      <main class="forum-main">
+        <div class="section-head">
+          <h2>Tin mới &amp; thảo luận</h2>
+          <span class="muted" style="font-size: 0.875rem">Sắp xếp: mới nhất</span>
+        </div>
+
+        <div class="card">
+          <div id="post-list-empty" class="empty-hint d-none">
+            <strong>Chưa có tin đăng nào</strong>
+            Thử đổi từ khóa hoặc chuyên mục — hoặc quay lại sau khi có bài đã duyệt.
+          </div>
+          <div id="post-list">
+            <p class="card-muted" style="padding: 1rem 1.125rem; margin: 0">Đang tải danh sách…</p>
+          </div>
+          <div id="forum-pagination" class="forum-pagination d-none" aria-label="Phân trang"></div>
+        </div>
+      </main>
+
+      <aside class="forum-sidebar">
+        <div class="card card-pad">
+          <p class="widget-title">Nổi bật</p>
+          <div id="featured-block" class="featured-block">
+            <p class="card-muted featured-block__hint">Đang tải tin nổi bật…</p>
+          </div>
+        </div>
+        <div class="card card-pad">
+          <p class="widget-title">Quy định đăng tin</p>
+          <ul class="rule-list">
+            <li>Không spam, không nội dung sai sự thật.</li>
+            <li>Tôn trọng thành viên, không quảng cáo trái phép.</li>
+            <li>Tin vi phạm có thể bị gỡ bỏ.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="#">Điều khoản</a>
+      <a href="#">Liên hệ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/posts-home.js"></script>
+  </body>
+</html>

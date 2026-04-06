@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bài viết của tôi — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html" aria-current="page">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="my-posts-wrap">
+      <div class="my-posts-head">
+        <h1>Bài viết của tôi</h1>
+        <a class="btn btn-primary" href="my-post-edit.html">Đăng tin mới</a>
+      </div>
+      <p class="auth-lead">
+        Bài gửi mới ở trạng thái <strong>chờ duyệt</strong>. Nếu bị từ chối, bạn sẽ thấy lý do và có thể sửa rồi gửi lại.
+      </p>
+
+      <div id="my-posts-alert" class="alert alert-danger d-none"></div>
+
+      <div id="my-posts-empty" class="card card-pad d-none">
+        <p class="card-muted" style="margin: 0">Bạn chưa có bài nào. Hãy đăng tin mới.</p>
+      </div>
+
+      <div class="my-posts-table-wrap">
+        <table class="my-posts-table" id="my-posts-table" hidden>
+          <thead>
+            <tr>
+              <th class="my-posts-col-thumb"></th>
+              <th>Tiêu đề</th>
+              <th>Chuyên mục</th>
+              <th>Trạng thái</th>
+              <th>Cập nhật</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="my-posts-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/my-posts-page.js"></script>
+  </body>
+</html>

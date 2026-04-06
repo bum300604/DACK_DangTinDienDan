@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tin nhắn — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Tin nhắn</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html" aria-current="page">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="chat-page">
+      <div class="chat-shell">
+        <aside class="chat-aside">
+          <div class="chat-aside__head">
+            <h1 class="chat-aside__title">Hội thoại</h1>
+            <button type="button" class="btn btn-primary btn-sm" id="chat-btn-admin">Chat quản trị</button>
+          </div>
+          <div id="chat-list" class="chat-list" aria-label="Danh sách hội thoại"></div>
+          <p id="chat-list-empty" class="card-muted chat-list-empty d-none">Chưa có hội thoại.</p>
+        </aside>
+        <section class="chat-main">
+          <div id="chat-placeholder" class="chat-placeholder">
+            <p class="card-muted">Chọn một hội thoại bên trái hoặc mở chat từ trang bài viết / nút « Chat quản trị ».</p>
+          </div>
+          <div id="chat-active" class="chat-active d-none">
+            <header class="chat-active__head">
+              <h2 id="chat-peer-title" class="chat-active__title"></h2>
+              <p id="chat-post-context" class="chat-active__context muted d-none"></p>
+            </header>
+            <div id="chat-thread" class="chat-thread" aria-live="polite"></div>
+            <form id="chat-form" class="chat-form">
+              <input type="file" id="chat-image-input" class="d-none" accept="image/jpeg,image/png,image/gif,image/webp" />
+              <div id="chat-form-preview-wrap" class="chat-form__preview-wrap d-none" aria-live="polite">
+                <img id="chat-image-preview" class="chat-form__preview-img" alt="" />
+                <button type="button" class="chat-form__preview-remove" id="chat-image-preview-remove" title="Bỏ ảnh" aria-label="Bỏ ảnh đính kèm">
+                  ×
+                </button>
+              </div>
+              <div class="chat-form__row">
+                <label class="sr-only" for="chat-input">Tin nhắn</label>
+                <textarea
+                  id="chat-input"
+                  class="chat-form__input"
+                  rows="2"
+                  maxlength="4000"
+                  placeholder="Viết tin nhắn…"
+                ></textarea>
+                <button type="button" class="btn btn-outline" id="chat-btn-image" title="Đính kèm ảnh">Ảnh</button>
+                <button type="submit" class="btn btn-primary">Gửi</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+      <div id="chat-alert" class="alert alert-danger d-none" style="margin: 1rem 1.25rem 0"></div>
+    </main>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/messages-page.js"></script>
+  </body>
+</html>

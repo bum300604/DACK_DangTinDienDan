@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đăng ký — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="index.html">Trang chủ</a>
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="auth-wrap">
+      <div class="auth-card">
+        <h1>Tạo tài khoản</h1>
+        <p class="auth-lead">Tham gia cộng đồng để đăng tin và bình luận.</p>
+        <div id="register-alert" class="alert alert-danger d-none"></div>
+        <form id="register-form">
+          <div class="form-group">
+            <label for="reg-username">Tên đăng nhập</label>
+            <input id="reg-username" name="username" autocomplete="username" required minlength="3" />
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email</label>
+            <input id="reg-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Mật khẩu</label>
+            <input
+              id="reg-password"
+              name="password"
+              type="password"
+              autocomplete="new-password"
+              required
+              minlength="8"
+            />
+          </div>
+          <div class="form-group">
+            <label for="reg-password2">Nhập lại mật khẩu</label>
+            <input
+              id="reg-password2"
+              name="password2"
+              type="password"
+              autocomplete="new-password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">Đăng ký</button>
+        </form>
+        <p class="text-center muted mt-1">Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+      </div>
+    </main>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="index.html">Trang chủ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/register-page.js"></script>
+  </body>
+</html>

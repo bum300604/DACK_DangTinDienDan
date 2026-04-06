@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chi tiết bài viết — ĐăngTin Diễn đàn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body class="forum-body">
+    <header class="forum-topbar">
+      <a href="index.html" class="forum-brand">
+        <span class="forum-brand__logo" aria-hidden="true">DT</span>
+        <span class="forum-brand__text">
+          <span class="forum-brand__name">ĐăngTin Diễn đàn</span>
+          <span class="forum-brand__tagline">Rao vặt · Mua bán · Trao đổi</span>
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Tài khoản">
+        <div id="nav-guest">
+          <a class="btn btn-outline" href="login.html">Đăng nhập</a>
+          <a class="btn btn-primary" href="register.html">Đăng ký</a>
+        </div>
+        <div id="nav-user" class="nav-user-row d-none">
+          <span id="nav-user-label" class="muted"></span>
+          <span id="nav-role-badge" class="badge badge-user"></span>
+          <a class="btn btn-outline" href="my-posts.html">Bài viết của tôi</a>
+          <a class="btn btn-outline" href="messages.html">Tin nhắn</a>
+          <a class="btn btn-outline" href="my-reports.html">Báo cáo</a>
+          <a class="btn btn-outline" href="profile.html">Hồ sơ</a>
+          <a class="btn btn-outline nav-admin-link d-none" href="admin.html">Quản trị</a>
+          <button type="button" class="btn btn-ghost" id="nav-logout">Đăng xuất</button>
+        </div>
+      </nav>
+    </header>
+
+    <div class="post-read-wrap">
+      <a class="post-back" href="index.html" id="post-back-link">← Về danh sách tin</a>
+
+      <article class="post-article" id="post-article" hidden>
+        <h1 id="post-title"></h1>
+        <div class="post-meta" id="post-meta"></div>
+        <p class="post-content" id="post-content"></p>
+        <div id="post-attachments-wrap" class="post-attachments-wrap" hidden></div>
+        <p class="post-chat-actions" id="post-chat-actions" hidden>
+          <button type="button" class="btn btn-outline btn-sm" id="post-chat-author">Nhắn cho người đăng</button>
+        </p>
+        <p class="post-report-actions" id="post-report-actions" hidden>
+          <button type="button" class="btn btn-ghost btn-sm" id="report-post-open">Báo cáo bài viết</button>
+        </p>
+      </article>
+
+      <div id="post-error" class="card card-pad d-none">
+        <p class="alert alert-danger" id="post-error-msg" style="margin: 0"></p>
+      </div>
+
+      <section class="comments-section" id="comments-section" hidden aria-labelledby="comments-heading">
+        <h2 id="comments-heading" class="comments-section__title">Bình luận</h2>
+
+        <div id="comments-login-hint" class="comments-login-hint d-none">
+          <a href="login.html">Đăng nhập</a> để tham gia bình luận.
+        </div>
+
+        <form id="comment-form" class="comment-form d-none">
+          <label class="sr-only" for="comment-input">Nội dung bình luận</label>
+          <textarea
+            id="comment-input"
+            class="comment-form__textarea"
+            rows="3"
+            maxlength="5000"
+            placeholder="Viết bình luận…"
+            required
+          ></textarea>
+          <div class="comment-form__actions">
+            <button type="submit" class="btn btn-primary btn-sm">Gửi bình luận</button>
+          </div>
+        </form>
+
+        <p id="comments-load-error" class="alert alert-danger d-none" role="alert"></p>
+        <ul id="comments-list" class="comments-list" aria-live="polite"></ul>
+      </section>
+    </div>
+
+    <div
+      id="report-modal"
+      class="modal-backdrop d-none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="report-modal-title"
+      hidden
+    >
+      <div class="modal-dialog card">
+        <h3 id="report-modal-title" class="modal-dialog__title">Báo cáo vi phạm</h3>
+        <p id="report-modal-hint" class="card-muted modal-dialog__hint"></p>
+        <form id="report-form">
+          <div class="form-group">
+            <label for="report-category">Loại vi phạm</label>
+            <select id="report-category" name="category" required>
+              <option value="">— Chọn —</option>
+              <option value="SPAM">Spam / quảng cáo</option>
+              <option value="HARASSMENT">Quấy rối / xúc phạm</option>
+              <option value="INAPPROPRIATE">Nội dung không phù hợp</option>
+              <option value="SCAM">Lừa đảo / gian lận</option>
+              <option value="OTHER">Khác</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="report-detail">Mô tả thêm (tùy chọn)</label>
+            <textarea id="report-detail" name="detail" rows="4" maxlength="2000" placeholder="Giúp ban quản trị hiểu rõ hơn…"></textarea>
+          </div>
+          <div class="modal-dialog__actions">
+            <button type="button" class="btn btn-outline" id="report-modal-cancel">Hủy</button>
+            <button type="submit" class="btn btn-primary">Gửi báo cáo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="forum-footer">
+      <span>© ĐăngTin Diễn đàn</span>
+      <a href="#">Điều khoản</a>
+      <a href="#">Liên hệ</a>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth-nav.js"></script>
+    <script src="js/post-read.js"></script>
+  </body>
+</html>
